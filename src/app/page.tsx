@@ -1,113 +1,230 @@
-import Image from 'next/image'
+import Image from "next/image";
+
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
+type CustomAvatar = {
+  name: string;
+  image: string;
+};
+
+// Define the type for the component's props
+type AvatarStackProps = {
+  avatars: CustomAvatar[];
+};
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+    <main className="flex min-h-screen flex-col items-center p-24">
+      <h1 className="scroll-m-20 text-4xl mb-10 font-extrabold tracking-tight lg:text-4xl">
+        ENS DAO Dashboard
+      </h1>
+      <div>
+        <Table>
+          <TableCaption>ENS DAO Wallets</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[100px] text-center">Address</TableHead>
+              <TableHead className="text-center">Working Group </TableHead>
+              <TableHead className="text-center">Signers</TableHead>
+              <TableHead colSpan={3} className="text-center">
+                Current Balance
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell className="font-medium">
+                <WalletAddress address="0x2686A8919Df194aA7673244549E68D42C1685d03" />
+              </TableCell>
+              <TableCell>Ecosystem</TableCell>
+              <TableCell className="flex gap-2">
+                <AvatarStack
+                  avatars={[
+                    {
+                      name: "limes.eth",
+                      image:
+                        "https://pbs.twimg.com/profile_images/1590768794418515968/nWP__xD1_400x400.png",
+                    },
+                    {
+                      name: "184.eth",
+                      image:
+                        "https://pbs.twimg.com/profile_images/1593023581146972161/dQ5-qk37_400x400.jpg",
+                    },
+                    {
+                      name: "slobo.eth",
+                      image:
+                        "https://pbs.twimg.com/profile_images/1520031978376077313/SNxbJVLP_400x400.jpg",
+                    },
+                  ]}
+                />
+              </TableCell>
+              <TableCell className="text-right">10.0 ETH</TableCell>
+              <TableCell className="text-right">250 USDC</TableCell>
+              <TableCell className="text-right">250 ENS</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell className="font-medium">
+                <WalletAddress address="0x2686A8919Df194aA7673244549E68D42C1685d03" />
+              </TableCell>
+              <TableCell>Public Goods</TableCell>
+              <TableCell className="flex gap-2">
+                <AvatarStack
+                  avatars={[
+                    {
+                      name: "limes.eth",
+                      image:
+                        "https://pbs.twimg.com/profile_images/1590768794418515968/nWP__xD1_400x400.png",
+                    },
+                    {
+                      name: "184.eth",
+                      image:
+                        "https://pbs.twimg.com/profile_images/1593023581146972161/dQ5-qk37_400x400.jpg",
+                    },
+                    {
+                      name: "slobo.eth",
+                      image:
+                        "https://pbs.twimg.com/profile_images/1520031978376077313/SNxbJVLP_400x400.jpg",
+                    },
+                  ]}
+                />
+              </TableCell>
+              <TableCell className="text-right">10.0 ETH</TableCell>
+              <TableCell className="text-right">250 USDC</TableCell>
+              <TableCell className="text-right">250 ENS</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell className="font-medium">
+                <WalletAddress address="0x2686A8919Df194aA7673244549E68D42C1685d03" />
+              </TableCell>
+              <TableCell>Ecosystem</TableCell>
+              <TableCell className="flex gap-2 relative">
+                <AvatarStack
+                  avatars={[
+                    {
+                      name: "coltron.eth",
+                      image:
+                        "https://pbs.twimg.com/profile_images/1636430861993385986/hCnL6SBv_400x400.jpg",
+                    },
+                    {
+                      name: "simona.eth",
+                      image:
+                        "https://pbs.twimg.com/profile_images/1494871363034750980/WbDNU90b_400x400.jpg",
+                    },
+                    {
+                      name: "slobo.eth",
+                      image:
+                        "https://pbs.twimg.com/profile_images/1520031978376077313/SNxbJVLP_400x400.jpg",
+                    },
+                  ]}
+                />
+              </TableCell>
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
+              <TableCell className="text-right">10.0 ETH</TableCell>
+              <TableCell className="text-right">250 USDC</TableCell>
+              <TableCell className="text-right">250 ENS</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+        <Select>
+          <SelectTrigger className="w-[160px]">
+            <SelectValue placeholder="Working Group" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All</SelectItem>
+            <SelectItem value="eco">Ecosystem</SelectItem>
+            <SelectItem value="pg">Public Goods</SelectItem>
+            <SelectItem value="meta">Metagov</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
     </main>
-  )
+  );
+}
+
+function CustomAvatar({
+  name,
+  image,
+  className,
+}: {
+  name: string;
+  image: string;
+  className?: string;
+}) {
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger>
+          <Avatar className={className}>
+            <AvatarImage className="cursor-pointer" src={image} />
+          </Avatar>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{name}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
+
+function WalletAddress({ address }: { address: string }) {
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger className="flex flex-col items-center">
+          <span className="">0x2686...85d03</span>
+          <span className="text-xs text-gray-500">eco.ens.eth</span>
+        </TooltipTrigger>
+
+        <TooltipContent className="">
+          <p> 0x2686A8919Df194aA7673244549E68D42C1685d03</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
+
+function AvatarStack({ avatars }: AvatarStackProps) {
+  if (!avatars || avatars.length < 2 || avatars.length > 5) {
+    console.error("AvatarStack requires between 2 and 5 avatars.");
+    return null;
+  }
+
+  return (
+    <div className="flex relative">
+      {avatars.map((avatar, index) => (
+        <CustomAvatar
+          key={avatar.name}
+          className={`z-${(index + 1) * 10} -ml-${
+            index > 0 ? 4 : 0
+          } drop-shadow-lg`}
+          name={avatar.name}
+          image={avatar.image}
+        />
+      ))}
+    </div>
+  );
 }
