@@ -34,14 +34,7 @@ const multisigsData: MultiSig[] = [
     usdc: 0,
     ens: 0,
   },
-  {
-    address: "0xBa0c461b22d918FB1F52fEF556310230d177D1F2" as Address,
-    workingGroup: "Ecosystem",
-    signers: [],
-    balance: 0,
-    usdc: 0,
-    ens: 0,
-  },
+
   {
     address: "0x536013c57DAF01D78e8a70cAd1B1abAda9411819" as Address,
     workingGroup: "Ecosystem",
@@ -58,22 +51,7 @@ const multisigsData: MultiSig[] = [
     usdc: 0,
     ens: 0,
   },
-  {
-    address: "0x69A79128462853833E22bBA1A43bcdAC4725761b" as Address,
-    workingGroup: "Ecosystem",
-    signers: [],
-    balance: 0,
-    usdc: 0,
-    ens: 0,
-  },
-  {
-    address: "0xb3a37c813d3d365a03dd1dd3e68cc11af019cdd6" as Address,
-    workingGroup: "Ecosystem",
-    signers: [],
-    balance: 0,
-    usdc: 0,
-    ens: 0,
-  },
+
   {
     address: "0x0d06a817584ac378849f03df6f11a9ad67dd786d" as Address,
     workingGroup: "Ecosystem",
@@ -100,31 +78,7 @@ const multisigsData: MultiSig[] = [
   },
   {
     address: "0x2686A8919Df194aA7673244549E68D42C1685d03" as Address,
-    workingGroup: "Metagov",
-    signers: [],
-    balance: 0,
-    usdc: 0,
-    ens: 0,
-  },
-  {
-    address: "0x4f4cadb8af8f1d463240c2b93952d8a16688a818" as Address,
-    workingGroup: "Metagov",
-    signers: [],
-    balance: 0,
-    usdc: 0,
-    ens: 0,
-  },
-  {
-    address: "0x4f4cadb8af8f1d463240c2b93952d8a16688a818" as Address,
-    workingGroup: "Metagov",
-    signers: [],
-    balance: 0,
-    usdc: 0,
-    ens: 0,
-  },
-  {
-    address: "0x8f730f4ac5fd234df9993e0e317f07e44fb869c1" as Address,
-    workingGroup: "Metagov",
+    workingGroup: "Ecosystem",
     signers: [],
     balance: 0,
     usdc: 0,
