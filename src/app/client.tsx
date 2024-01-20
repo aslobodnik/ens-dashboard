@@ -49,22 +49,33 @@ export function Client({ multiSigData }: { multiSigData: MultiSig[] }) {
   );
 
   return (
-    <main className="flex min-h-screen flex-col  items-center p-24 mx-auto">
+    <main className="flex min-h-screen flex-col  items-center sm:p-24 mx-auto">
       <h1 className="scroll-m-20 text-4xl mb-10 font-extrabold tracking-tight lg:text-4xl">
         ENS DAO Dashboard
       </h1>
 
       <div>
-        <Table>
+        {/*Desktop Table*/}
+        <Table className="hidden sm:block">
           <TableCaption>ENS DAO Wallets</TableCaption>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[100px] text-center">Address</TableHead>
-              <TableHead className="text-center">Working Group </TableHead>
-              <TableHead className="text-center">Signers</TableHead>
-              <TableHead colSpan={3} className="text-center">
+              <TableHead className="w-[100px]  text-lg text-center">
+                Address
+              </TableHead>
+
+              <TableHead className="text-center text-lg">Signers</TableHead>
+              <TableHead colSpan={3} className="text-center text-lg">
                 Current Balance
               </TableHead>
+            </TableRow>
+            <TableRow>
+              <TableHead></TableHead>
+
+              <TableHead></TableHead>
+              <TableHead className="text-right text-lg">ETH</TableHead>
+              <TableHead className="text-right text-lg">USDC</TableHead>
+              <TableHead className="text-right text-lg">ENS</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -75,8 +86,11 @@ export function Client({ multiSigData }: { multiSigData: MultiSig[] }) {
                   <div className="text-xs text-left pt-2 text-gray-400">
                     Signers: {multisig.signers.length}
                   </div>
+                  <div className="text-xs text-left pt-2 text-gray-400">
+                    Working Group: {multisig.workingGroup}
+                  </div>
                 </TableCell>
-                <TableCell>{multisig.workingGroup}</TableCell>
+
                 <TableCell className="flex flex-col   min-w-56 max-w-96 flex-wrap">
                   {multisig.signers.map((signer, signerIndex) => (
                     <DisplaySigner
@@ -85,19 +99,19 @@ export function Client({ multiSigData }: { multiSigData: MultiSig[] }) {
                     />
                   ))}
                 </TableCell>
-                <TableCell className="text-right">
-                  {formatCurrency(multisig.balance as bigint, 18, 1)} ETH
+                <TableCell className="text-right text-lg">
+                  {formatCurrency(multisig.balance as bigint, 18, 1)}
                 </TableCell>
-                <TableCell className="text-right">
-                  {formatCurrency(multisig.usdc as bigint, 6, 0)} USDC
+                <TableCell className="text-right text-lg">
+                  {formatCurrency(multisig.usdc as bigint, 6, 0)}
                 </TableCell>
-                <TableCell className="text-right">
-                  {formatCurrency(multisig.ens as bigint, 18, 0)} ENS
+                <TableCell className="text-right text-lg">
+                  {formatCurrency(multisig.ens as bigint, 18, 0)}
                 </TableCell>
               </TableRow>
             ))}
             <TableRow>
-              <TableCell className="text-center  text-xl font-bold" colSpan={3}>
+              <TableCell className="text-center  text-xl font-bold" colSpan={2}>
                 Total
               </TableCell>
               <TableCell className="text-right  text-xl font-bold">
@@ -112,12 +126,86 @@ export function Client({ multiSigData }: { multiSigData: MultiSig[] }) {
             </TableRow>
           </TableBody>
         </Table>
+        {/*Mobile Table*/}
+        <div>
+          <Table className="sm:hidden w-full ">
+            <TableCaption>ENS DAO Wallets</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="text-center">Address</TableHead>
+                <TableHead className="text-center ">Signers</TableHead>
+                <TableHead className="text-center ">Balances</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {multiSigData.map((multisig, index) => (
+                <TableRow key={index}>
+                  <TableCell className="font-medium ">
+                    <WalletAddress address={multisig.address} />
+                    <div className="text-xs text-left pt-2 text-gray-400">
+                      Signers: {multisig.signers.length}
+                    </div>
+                    <div className="text-xs text-left pt-2 text-gray-400">
+                      {multisig.workingGroup}
+                    </div>
+                  </TableCell>
+
+                  <TableCell className="flex flex-col w-fit text-nowrap flex-wrap">
+                    {multisig.signers.map((signer, signerIndex) => (
+                      <DisplaySigner
+                        key={signerIndex}
+                        address={signer as Address}
+                        mobile={true}
+                      />
+                    ))}
+                  </TableCell>
+                  <TableCell className="text-sm">
+                    <div className="flex text-right   font-mono flex-col">
+                      <span>
+                        {formatCurrency(multisig.balance as bigint, 18, 1)}{" "}
+                        &nbsp;ETH
+                      </span>
+                      <span>
+                        {formatCurrency(multisig.usdc as bigint, 6, 0)} USDC
+                      </span>
+                      <span>
+                        {formatCurrency(multisig.ens as bigint, 18, 0)}{" "}
+                        &nbsp;ENS
+                      </span>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+              <TableRow>
+                <TableCell
+                  className="text-center  text-xl font-bold"
+                  colSpan={2}
+                >
+                  Total
+                </TableCell>
+                <TableCell className="text-right font-mono font-bold">
+                  <div className="flex flex-col">
+                    <span>{formatCurrency(totalEth, 18, 1)} &nbsp;ETH</span>
+                    <span>{formatCurrency(totalUsdc, 6, 0)} USDC</span>
+                    <span>{formatCurrency(totalEns, 18, 0)} &nbsp;ENS</span>
+                  </div>
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </div>
       </div>
     </main>
   );
 }
 
-function DisplaySigner({ address }: { address: Address }) {
+function DisplaySigner({
+  address,
+  mobile = false,
+}: {
+  address: Address;
+  mobile?: boolean;
+}) {
   const { data: ensName, isLoading: isLoadingEnsName } = useEnsName({
     address,
   });
@@ -129,15 +217,17 @@ function DisplaySigner({ address }: { address: Address }) {
     <span className="py-1">
       <TooltipProvider>
         <Tooltip>
-          <TooltipTrigger className="flex ">
-            <Avatar className=" drop-shadow-md">
-              <AvatarImage
-                className="cursor-pointer"
-                src={`https://metadata.ens.domains/mainnet/avatar/${ensName}`}
-              />
-              <AvatarFallback></AvatarFallback>
-            </Avatar>
-            <span className="w-full text-left mt-2 pl-2 ">
+          <TooltipTrigger className="flex text-lg">
+            {!mobile && (
+              <Avatar className="w-10 h-10 drop-shadow-md">
+                <AvatarImage
+                  className="cursor-pointer "
+                  src={`https://metadata.ens.domains/mainnet/avatar/${ensName}`}
+                />
+                <AvatarFallback></AvatarFallback>
+              </Avatar>
+            )}
+            <span className="w-full text-xs mt-0 pl-0 sm:text-base text-left sm:mt-1 sm:pl-2 ">
               {ensName || displayAddress}
             </span>
           </TooltipTrigger>
@@ -159,7 +249,7 @@ function WalletAddress({ address }: { address: Address }) {
       <Tooltip>
         <TooltipTrigger className="flex flex-col ">
           <span className="w-full text-left">{displayAddress}</span>
-          <span className="text-xs text-gray-500 w-full text-left">
+          <span className="text-xs hidden sm:block text-gray-500 w-full text-left">
             {ensName}
           </span>
         </TooltipTrigger>
