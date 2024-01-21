@@ -112,7 +112,7 @@ export function Client({ multiSigData }: { multiSigData: MultiSig[] }) {
               </TableRow>
             ))}
             <TableRow className="text-lg font-bold">
-              <TableCell className="text-center" colSpan={2}>
+              <TableCell className="text-right" colSpan={2}>
                 Total
               </TableCell>
               <TableCell className="text-right">
@@ -130,7 +130,7 @@ export function Client({ multiSigData }: { multiSigData: MultiSig[] }) {
         {/*Mobile Table*/}
         <div>
           <Table className="sm:hidden w-full ">
-            <TableCaption>ENS DAO Wallets</TableCaption>
+            {/* <TableCaption>ENS DAO Wallets</TableCaption> */}
             <TableHeader>
               <TableRow>
                 <TableHead className="text-center">Address</TableHead>
@@ -180,7 +180,7 @@ export function Client({ multiSigData }: { multiSigData: MultiSig[] }) {
               ))}
               <TableRow>
                 <TableCell
-                  className="text-center  text-xl font-bold"
+                  className="text-right  text-xl font-bold"
                   colSpan={2}
                 >
                   Total
