@@ -51,13 +51,13 @@ export function Client({ multiSigData }: { multiSigData: MultiSig[] }) {
   return (
     <main className="flex min-h-screen flex-col  items-center sm:p-24 mx-auto">
       <h1 className="scroll-m-20 text-4xl mb-10 font-extrabold tracking-tight lg:text-4xl">
-        ENS DAO Dashboard
+        ENS DAO Wallets
       </h1>
 
       <div>
         {/*Desktop Table*/}
         <Table className="hidden sm:block">
-          <TableCaption>ENS DAO Wallets</TableCaption>
+          {/* <TableCaption>ENS DAO Wallets</TableCaption> */}
           <TableHeader>
             <TableRow>
               <TableHead className="w-[100px]  text-lg text-center">
@@ -229,7 +229,7 @@ function DisplaySigner({
                 <AvatarFallback></AvatarFallback>
               </Avatar>
             )}
-            <span className="w-full text-xs mt-0 pl-0 sm:text-base text-left sm:mt-1 sm:pl-2 ">
+            <span className="w-full text-xs mt-0 pl-0 sm:text-base text-left sm:mt-2 sm:pl-2 ">
               {ensName || displayAddress}
             </span>
           </TooltipTrigger>

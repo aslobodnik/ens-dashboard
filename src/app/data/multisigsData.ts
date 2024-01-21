@@ -29,15 +29,15 @@ const multisigsData: MultiSig[] = [
     usdc: 0,
     ens: 0,
   },
-  {
-    address: "0xddb53563586e2d5f9cde97b99b1062c4315785ec" as Address,
-    label: "Ecosystem",
-    signers: [],
-    threshold: 0,
-    balance: 0,
-    usdc: 0,
-    ens: 0,
-  },
+  // {
+  //   address: "0xddb53563586e2d5f9cde97b99b1062c4315785ec" as Address,
+  //   label: "Spruce ID",
+  //   signers: [],
+  //   threshold: 0,
+  //   balance: 0,
+  //   usdc: 0,
+  //   ens: 0,
+  // },
 
   {
     address: "0x536013c57DAF01D78e8a70cAd1B1abAda9411819" as Address,
@@ -94,14 +94,14 @@ const multisigsData: MultiSig[] = [
     usdc: 0,
     ens: 0,
   },
-  {
-    address: "0x690F0581eCecCf8389c223170778cD9D029606F2" as Address,
-    label: "ENS Labs",
-    signers: [],
-    threshold: 0,
-    balance: 0,
-    usdc: 0,
-    ens: 0,
-  },
+  // {
+  //   address: "0x690F0581eCecCf8389c223170778cD9D029606F2" as Address,
+  //   label: "ENS Labs",
+  //   signers: [],
+  //   threshold: 0,
+  //   balance: 0,
+  //   usdc: 0,
+  //   ens: 0,
+  // },
 ];
 export default multisigsData;
