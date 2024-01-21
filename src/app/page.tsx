@@ -33,6 +33,16 @@ const abiOwners = [
   },
 ] as const;
 
+const abiGetThreshold = [
+  {
+    inputs: [],
+    name: "getThreshold",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+];
+
 const publicClient = createPublicClient({
   batch: {
     multicall: true,
@@ -47,6 +57,7 @@ type MultiSigResult = {
   balance_USDC: BigInt;
   balance_ENS: BigInt;
   signers: Address[];
+  threshold: number;
 };
 
 export default async function Home() {
@@ -92,6 +103,12 @@ async function getBalancesForAddresses({
       abi: abiOwners,
       functionName: "getOwners",
     });
+
+    const threshold = await publicClient.readContract({
+      address: address,
+      abi: abiGetThreshold,
+      functionName: "getThreshold",
+    });
     const balance = await publicClient.getBalance({
       address: address,
     });
@@ -102,6 +119,7 @@ async function getBalancesForAddresses({
       balance_ENS: balanceENS,
       balance_USDC: balanceUSDC,
       signers: [...signers],
+      threshold: threshold as number,
     };
   });
 
@@ -131,6 +149,7 @@ async function updateMultisigsWithBalances(
       usdc: balanceInfo ? balanceInfo.balance_USDC : multisig.usdc,
       ens: balanceInfo ? balanceInfo.balance_ENS : multisig.ens,
       signers: balanceInfo ? balanceInfo.signers : multisig.signers,
+      threshold: balanceInfo ? balanceInfo.threshold : multisig.threshold,
     };
   });
 

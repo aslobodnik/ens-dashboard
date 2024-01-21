@@ -84,10 +84,11 @@ export function Client({ multiSigData }: { multiSigData: MultiSig[] }) {
                 <TableCell className="font-medium  min-w-52">
                   <WalletAddress address={multisig.address} />
                   <div className="text-xs text-left pt-2 text-gray-400">
-                    Signers: {multisig.signers.length}
+                    Signers: {multisig.threshold.toLocaleString()}/
+                    {multisig.signers.length}
                   </div>
                   <div className="text-xs text-left pt-2 text-gray-400">
-                    Working Group: {multisig.workingGroup}
+                    {multisig.label}
                   </div>
                 </TableCell>
 
@@ -110,17 +111,17 @@ export function Client({ multiSigData }: { multiSigData: MultiSig[] }) {
                 </TableCell>
               </TableRow>
             ))}
-            <TableRow>
-              <TableCell className="text-center  text-xl font-bold" colSpan={2}>
+            <TableRow className="text-lg font-bold">
+              <TableCell className="text-center" colSpan={2}>
                 Total
               </TableCell>
-              <TableCell className="text-right  text-xl font-bold">
+              <TableCell className="text-right">
                 {formatCurrency(totalEth, 18, 1)} ETH
               </TableCell>
-              <TableCell className="text-right  text-xl font-bold">
+              <TableCell className="text-right">
                 {formatCurrency(totalUsdc, 6, 0)} USDC
               </TableCell>
-              <TableCell className="text-right text-xl font-bold">
+              <TableCell className="text-right">
                 {formatCurrency(totalEns, 18, 0)} ENS
               </TableCell>
             </TableRow>
@@ -143,10 +144,11 @@ export function Client({ multiSigData }: { multiSigData: MultiSig[] }) {
                   <TableCell className="font-medium ">
                     <WalletAddress address={multisig.address} />
                     <div className="text-xs text-left pt-2 text-gray-400">
-                      Signers: {multisig.signers.length}
+                      Signers: {multisig.threshold.toLocaleString()}/
+                      {multisig.signers.length}
                     </div>
                     <div className="text-xs text-left pt-2 text-gray-400">
-                      {multisig.workingGroup}
+                      {multisig.label}
                     </div>
                   </TableCell>
 
@@ -231,7 +233,9 @@ function DisplaySigner({
               {ensName || displayAddress}
             </span>
           </TooltipTrigger>
-          <TooltipContent className="">{address}</TooltipContent>
+          <TooltipContent copyText={address} className="">
+            {address}
+          </TooltipContent>
         </Tooltip>
       </TooltipProvider>
     </span>
@@ -253,7 +257,9 @@ function WalletAddress({ address }: { address: Address }) {
             {ensName}
           </span>
         </TooltipTrigger>
-        <TooltipContent className="">{address}</TooltipContent>
+        <TooltipContent copyText={address} className="">
+          {address}
+        </TooltipContent>
       </Tooltip>
     </TooltipProvider>
   );
