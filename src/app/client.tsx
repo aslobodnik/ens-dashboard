@@ -50,8 +50,8 @@ export function Client({ multiSigData }: { multiSigData: MultiSig[] }) {
 
   return (
     <main className="flex min-h-screen flex-col  items-center sm:p-24 mx-auto">
-      <h1 className="scroll-m-20 text-4xl mb-10 font-extrabold tracking-tight lg:text-4xl">
-        ENS DAO Wallets
+      <h1 className="text-3xl sm:mt-0 my-10 font-extrabold ">
+        Working Group Multisigs
       </h1>
 
       <div>
