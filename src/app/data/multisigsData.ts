@@ -4,7 +4,7 @@ import { MultiSig } from "../types/types";
 const multisigsData: MultiSig[] = [
   {
     address: "0xcD42b4c4D102cc22864e3A1341Bb0529c17fD87d" as Address,
-    label: "Public Goods",
+    label: "Public Goods WG",
     signers: [],
     threshold: 0,
     balance: 0,
@@ -13,7 +13,7 @@ const multisigsData: MultiSig[] = [
   },
   {
     address: "0x2686A8919Df194aA7673244549E68D42C1685d03" as Address,
-    label: "Ecosystem",
+    label: "Ecosystem WG",
     signers: [],
     threshold: 0,
     balance: 0,
@@ -22,7 +22,7 @@ const multisigsData: MultiSig[] = [
   },
   {
     address: "0x6a016548310076285668e2378df70bd545396b5a" as Address,
-    label: "Ecosystem",
+    label: "Ecosystem WG",
     signers: [],
     threshold: 0,
     balance: 0,
@@ -41,7 +41,7 @@ const multisigsData: MultiSig[] = [
 
   {
     address: "0x536013c57DAF01D78e8a70cAd1B1abAda9411819" as Address,
-    label: "Ecosystem",
+    label: "Ecosystem WG",
     signers: [],
     threshold: 0,
     balance: 0,
@@ -50,7 +50,7 @@ const multisigsData: MultiSig[] = [
   },
   {
     address: "0x9B9c249Be04dd433c7e8FbBF5E61E6741b89966D" as Address,
-    label: "Ecosystem",
+    label: "Ecosystem WG",
     signers: [],
     threshold: 0,
     balance: 0,
@@ -79,15 +79,6 @@ const multisigsData: MultiSig[] = [
   {
     address: "0x91c32893216dE3eA0a55ABb9851f581d4503d39b" as Address,
     label: "Metagov WG",
-    signers: [],
-    threshold: 0,
-    balance: 0,
-    usdc: 0,
-    ens: 0,
-  },
-  {
-    address: "0x2686A8919Df194aA7673244549E68D42C1685d03" as Address,
-    label: "Ecosystem WG",
     signers: [],
     threshold: 0,
     balance: 0,

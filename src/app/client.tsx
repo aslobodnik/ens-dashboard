@@ -63,16 +63,7 @@ export function Client({ multiSigData }: { multiSigData: MultiSig[] }) {
               <TableHead className="w-[100px]  text-lg text-center">
                 Address
               </TableHead>
-
               <TableHead className="text-center text-lg">Signers</TableHead>
-              <TableHead colSpan={3} className="text-center text-lg">
-                Current Balance
-              </TableHead>
-            </TableRow>
-            <TableRow>
-              <TableHead></TableHead>
-
-              <TableHead></TableHead>
               <TableHead className="text-right text-lg">ETH</TableHead>
               <TableHead className="text-right text-lg">USDC</TableHead>
               <TableHead className="text-right text-lg">ENS</TableHead>
