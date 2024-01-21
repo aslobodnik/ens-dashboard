@@ -9,6 +9,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Tooltip,
   TooltipContent,
@@ -24,6 +32,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { createPublicClient, http, Address, formatUnits } from "viem";
 
 import { MultiSig } from "./types/types";
+import { useState } from "react";
 
 const alchemyUrl = process.env.ALCHEMY_URL;
 const transport = http(alchemyUrl);
@@ -34,25 +43,33 @@ const client = createPublicClient({
 });
 
 export function Client({ multiSigData }: { multiSigData: MultiSig[] }) {
-  const totalEth = multiSigData.reduce(
+  const [selectedWg, setSelectedWg] = useState<string>("all");
+
+  const filteredData =
+    selectedWg === "all"
+      ? multiSigData
+      : multiSigData.filter((multisig) => multisig.label === selectedWg);
+
+  const totalEth = filteredData.reduce(
     (acc, curr) => acc + toBigInt(curr.balance),
     BigInt(0)
   );
-  const totalUsdc = multiSigData.reduce(
+  const totalUsdc = filteredData.reduce(
     (acc, curr) => acc + toBigInt(curr.usdc),
     BigInt(0)
   );
-  const totalEns = multiSigData.reduce(
+  const totalEns = filteredData.reduce(
     (acc, curr) => acc + toBigInt(curr.ens),
     BigInt(0)
   );
+
+  console.log("selectedWg", selectedWg);
 
   return (
     <main className="flex min-h-screen flex-col  items-center sm:p-24 mx-auto">
       <h1 className="text-3xl sm:mt-0 my-10 font-extrabold ">
         Working Group Multisigs
       </h1>
-
       <div>
         {/*Desktop Table*/}
         <Table className="hidden sm:block">
@@ -60,7 +77,17 @@ export function Client({ multiSigData }: { multiSigData: MultiSig[] }) {
           <TableHeader>
             <TableRow>
               <TableHead className="w-[100px]  text-lg text-center">
-                Address
+                <Select onValueChange={(value) => setSelectedWg(value)}>
+                  <SelectTrigger className="w-[180px] text-lg">
+                    <SelectValue placeholder="Working Group" />
+                  </SelectTrigger>
+                  <SelectContent className="text-lg">
+                    <SelectItem value="all">Working Group</SelectItem>
+                    <SelectItem value="Public Goods">Public Goods</SelectItem>
+                    <SelectItem value="Ecosystem">Ecosystem</SelectItem>
+                    <SelectItem value="Metagov">Metagov</SelectItem>
+                  </SelectContent>
+                </Select>
               </TableHead>
               <TableHead className="text-center text-lg">Signers</TableHead>
               <TableHead className="text-right text-lg">ETH</TableHead>
@@ -69,7 +96,7 @@ export function Client({ multiSigData }: { multiSigData: MultiSig[] }) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {multiSigData.map((multisig, index) => (
+            {filteredData.map((multisig, index) => (
               <TableRow key={index}>
                 <TableCell className="font-medium  min-w-52">
                   <WalletAddress address={multisig.address} />
@@ -123,13 +150,25 @@ export function Client({ multiSigData }: { multiSigData: MultiSig[] }) {
             {/* <TableCaption>ENS DAO Wallets</TableCaption> */}
             <TableHeader>
               <TableRow>
-                <TableHead className="text-center">Address</TableHead>
+                <TableHead className="text-center">
+                  <Select onValueChange={(value) => setSelectedWg(value)}>
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Working Group" />
+                    </SelectTrigger>
+                    <SelectContent className="text-lg">
+                      <SelectItem value="all">All</SelectItem>
+                      <SelectItem value="Public Goods">Public Goods</SelectItem>
+                      <SelectItem value="Ecosystem">Ecosystem</SelectItem>
+                      <SelectItem value="Metagov">Metagov</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </TableHead>
                 <TableHead className="text-center ">Signers</TableHead>
                 <TableHead className="text-center ">Balances</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {multiSigData.map((multisig, index) => (
+              {filteredData.map((multisig, index) => (
                 <TableRow key={index}>
                   <TableCell className="font-medium ">
                     <WalletAddress address={multisig.address} />
@@ -243,7 +282,7 @@ function WalletAddress({ address }: { address: Address }) {
       <Tooltip>
         <TooltipTrigger className="flex flex-col ">
           <span className="w-full text-left">{displayAddress}</span>
-          <span className="text-xs hidden sm:block text-gray-500 w-full text-left">
+          <span className="text-xs  text-gray-400 w-full text-left mt-1">
             {ensName}
           </span>
         </TooltipTrigger>
