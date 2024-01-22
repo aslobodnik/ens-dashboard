@@ -140,10 +140,10 @@ export function Client({ multiSigData }: { multiSigData: MultiSig[] }) {
                   {formatCurrency(multisig.balance as bigint, 18, 1)}
                 </TableCell>
                 <TableCell className="text-right text-lg">
-                  {formatCurrency(multisig.usdc as bigint, 6, 0)}
+                  {formatCurrency(multisig.usdc as bigint, 6, 0, true)}
                 </TableCell>
                 <TableCell className="text-right text-lg">
-                  {formatCurrency(multisig.ens as bigint, 18, 0)}
+                  {formatCurrency(multisig.ens as bigint, 18, 0, true)}
                 </TableCell>
               </TableRow>
             ))}
@@ -160,10 +160,10 @@ export function Client({ multiSigData }: { multiSigData: MultiSig[] }) {
                 {formatCurrency(totalEth, 18, 1)} ETH
               </TableCell>
               <TableCell className="text-right">
-                {formatCurrency(totalUsdc, 6, 0)} USDC
+                {formatCurrency(totalUsdc, 6, 0, true)} USDC
               </TableCell>
               <TableCell className="text-right">
-                {formatCurrency(totalEns, 18, 0)} ENS
+                {formatCurrency(totalEns, 18, 0, true)} ENS
               </TableCell>
             </TableRow>
           </TableBody>
@@ -221,10 +221,11 @@ export function Client({ multiSigData }: { multiSigData: MultiSig[] }) {
                         &nbsp;ETH
                       </span>
                       <span>
-                        {formatCurrency(multisig.usdc as bigint, 6, 0)} USDC
+                        {formatCurrency(multisig.usdc as bigint, 6, 0, true)}{" "}
+                        USDC
                       </span>
                       <span>
-                        {formatCurrency(multisig.ens as bigint, 18, 0)}{" "}
+                        {formatCurrency(multisig.ens as bigint, 18, 0, true)}{" "}
                         &nbsp;ENS
                       </span>
                     </div>
@@ -245,8 +246,10 @@ export function Client({ multiSigData }: { multiSigData: MultiSig[] }) {
                 <TableCell className="text-right font-mono font-bold">
                   <div className="flex flex-col">
                     <span>{formatCurrency(totalEth, 18, 1)} &nbsp;ETH</span>
-                    <span>{formatCurrency(totalUsdc, 6, 0)} USDC</span>
-                    <span>{formatCurrency(totalEns, 18, 0)} &nbsp;ENS</span>
+                    <span>{formatCurrency(totalUsdc, 6, 0, true)} USDC</span>
+                    <span>
+                      {formatCurrency(totalEns, 18, 0, true)} &nbsp;ENS
+                    </span>
                   </div>
                 </TableCell>
               </TableRow>
@@ -254,6 +257,9 @@ export function Client({ multiSigData }: { multiSigData: MultiSig[] }) {
           </Table>
         </div>
       </div>
+      <h1 className="text-3xl sm:mt-0 my-10 font-extrabold ">
+        Working Group Multisigs
+      </h1>
     </main>
   );
 }
@@ -325,12 +331,17 @@ function WalletAddress({ address }: { address: Address }) {
 function formatCurrency(
   amount: bigint,
   tokenDecimals: number,
-  displayDecimals: number
+  displayDecimals: number,
+  short: boolean = false // Default to false if not provided
 ): string {
-  const formatted = parseFloat(formatUnits(amount, tokenDecimals)).toFixed(
-    displayDecimals
-  );
-  return new Intl.NumberFormat("en-US").format(parseFloat(formatted));
+  const formattedNumber = parseFloat(formatUnits(amount, tokenDecimals));
+
+  if (short) {
+    return formatShort(formattedNumber);
+  } else {
+    const formatted = formattedNumber.toFixed(displayDecimals);
+    return new Intl.NumberFormat("en-US").format(parseFloat(formatted));
+  }
 }
 
 function toBigInt(value: number | bigint | BigInt | null | undefined): bigint {
@@ -341,4 +352,13 @@ function toBigInt(value: number | bigint | BigInt | null | undefined): bigint {
   } else {
     throw new Error("Invalid type for conversion to bigint");
   }
+}
+
+function formatShort(num: number): string {
+  if (num < 1_000) return num.toString();
+  if (num >= 1_000 && num < 1_000_000) return (num / 1_000).toFixed(1) + "k";
+  if (num >= 1_000_000 && num < 1_000_000_000)
+    return (num / 1_000_000).toFixed(2) + "m";
+  if (num >= 1_000_000_000) return (num / 1_000_000_000).toFixed(1) + "B";
+  return num.toString(); // Fallback for very large numbers
 }
