@@ -24,6 +24,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
+import { Checkbox } from "@/components/ui/checkbox";
+
 import { useEnsName } from "wagmi";
 
 import { mainnet } from "viem/chains";
@@ -44,11 +46,30 @@ const client = createPublicClient({
 
 export function Client({ multiSigData }: { multiSigData: MultiSig[] }) {
   const [selectedWg, setSelectedWg] = useState<string>("all");
+  const [showZeroBalance, setShowZeroBalance] = useState<boolean>(false);
 
-  const filteredData =
-    selectedWg === "all"
-      ? multiSigData
-      : multiSigData.filter((multisig) => multisig.label === selectedWg);
+  const handleCheckboxChange = (value: boolean) => {
+    setShowZeroBalance(value);
+  };
+
+  const isZero = (amount: BigInt | number, tokenDecimals: number): boolean => {
+    // Ensure amountNumber is always a number
+    const amountNumber =
+      typeof amount === "bigint"
+        ? parseFloat(formatUnits(amount, tokenDecimals))
+        : parseFloat(String(amount));
+    return amountNumber <= 0.01;
+  };
+
+  const filteredData = multiSigData.filter((multisig) => {
+    return (
+      (selectedWg === "all" || multisig.label === selectedWg) &&
+      (showZeroBalance ||
+        !isZero(multisig.balance, 18) ||
+        !isZero(multisig.usdc, 6) ||
+        !isZero(multisig.ens, 18))
+    );
+  });
 
   const totalEth = filteredData.reduce(
     (acc, curr) => acc + toBigInt(curr.balance),
@@ -62,8 +83,6 @@ export function Client({ multiSigData }: { multiSigData: MultiSig[] }) {
     (acc, curr) => acc + toBigInt(curr.ens),
     BigInt(0)
   );
-
-  console.log("selectedWg", selectedWg);
 
   return (
     <main className="flex min-h-screen flex-col  items-center sm:p-24 mx-auto">
@@ -129,9 +148,14 @@ export function Client({ multiSigData }: { multiSigData: MultiSig[] }) {
               </TableRow>
             ))}
             <TableRow className="text-lg font-bold">
-              <TableCell className="text-right" colSpan={2}>
-                Total
+              <TableCell className="font-normal text-sm text-gray-400 flex gap-1">
+                <Checkbox
+                  onCheckedChange={handleCheckboxChange}
+                  checked={showZeroBalance}
+                />
+                Show Zero Balance
               </TableCell>
+              <TableCell className="text-right">Total</TableCell>
               <TableCell className="text-right">
                 {formatCurrency(totalEth, 18, 1)} ETH
               </TableCell>
@@ -208,10 +232,14 @@ export function Client({ multiSigData }: { multiSigData: MultiSig[] }) {
                 </TableRow>
               ))}
               <TableRow>
-                <TableCell
-                  className="text-right  text-xl font-bold"
-                  colSpan={2}
-                >
+                <TableCell className="font-normal text-sm text-gray-400 flex gap-1">
+                  <Checkbox
+                    onCheckedChange={handleCheckboxChange}
+                    checked={showZeroBalance}
+                  />
+                  Show Zero Balance
+                </TableCell>
+                <TableCell className="text-right  text-xl font-bold">
                   Total
                 </TableCell>
                 <TableCell className="text-right font-mono font-bold">
