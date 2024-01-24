@@ -58,15 +58,30 @@ export function Client({
     setShowZeroBalance(value);
   };
 
-  const filteredData = multiSigData.filter((multisig) => {
-    return (
-      (selectedWg === "all" || multisig.label === selectedWg) &&
-      (showZeroBalance ||
-        !isZero(multisig.ethBalance || 0n, 18) ||
-        !isZero(multisig.usdcBalance || 0n, 6) ||
-        !isZero(multisig.ensBalance || 0n, 18))
-    );
-  });
+  const filteredData = multiSigData
+    .filter((multisig) => {
+      return (
+        (selectedWg === "all" || multisig.label === selectedWg) &&
+        (showZeroBalance ||
+          !isZero(multisig.ethBalance || 0n, 18) ||
+          !isZero(multisig.usdcBalance || 0n, 6) ||
+          !isZero(multisig.ensBalance || 0n, 18))
+      );
+    })
+    .sort((a, b) => {
+      // Handle cases where label might be undefined or null
+      const labelA = a.label || "";
+      const labelB = b.label || "";
+
+      // Compare for alphabetical sorting
+      if (labelA < labelB) {
+        return -1;
+      }
+      if (labelA > labelB) {
+        return 1;
+      }
+      return 0;
+    });
 
   const totalEth = filteredData.reduce(
     (acc, curr) => acc + (curr.ethBalance || 0n),
@@ -327,7 +342,7 @@ function WalletAddress({ address }: { address: Address }) {
               ? ensName.length > 15
                 ? ensName.substring(0, 15) + "..."
                 : ensName
-              : "N/A"}
+              : ""}
           </span>
         </TooltipTrigger>
         <TooltipContent copyText={address} className="">
@@ -389,10 +404,10 @@ function ContractsTable({ opsData }: { opsData: ContractInfo[] }) {
             {opsData.map((contract, index) => (
               <TableRow key={index}>
                 <TableCell className="font-medium sm:min-w-52">
-                  <div className="text-xs text-left pt-2 text-gray-400">
+                  <div className="text-xs sm:text-base text-left pt-2">
                     <WalletAddress address={contract.address} />
                   </div>
-                  <div className="text-xs text-left pt-1 text-gray-400">
+                  <div className="text-xs sm:text-base text-left pt-1 text-gray-400">
                     {contract.label || "N/A"}
                   </div>
                 </TableCell>
