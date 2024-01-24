@@ -114,13 +114,13 @@ export function Client({
           <TableBody>
             {filteredData.map((multisig, index) => (
               <TableRow key={index}>
-                <TableCell className="font-medium  min-w-52">
+                <TableCell className="font-medium text-base  min-w-52">
                   <WalletAddress address={multisig.address} />
-                  <div className="text-xs text-left pt-2 text-gray-400">
+                  <div className="text-left pt-2 text-gray-400">
                     Signers: {multisig.threshold.toLocaleString()}/
                     {multisig.signers.length}
                   </div>
-                  <div className="text-xs text-left pt-2 text-gray-400">
+                  <div className="text-left pt-2 text-gray-400">
                     {multisig.label}
                   </div>
                 </TableCell>
@@ -319,8 +319,10 @@ function WalletAddress({ address }: { address: Address }) {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger className="flex flex-col ">
-          <span className="w-full  text-xs   text-left">{displayAddress}</span>
-          <span className="text-xs  truncate text-gray-400 w-full text-left mt-1">
+          <span className="w-full  text-xs sm:text-base  text-left">
+            {displayAddress}
+          </span>
+          <span className="text-xs sm:text-base truncate text-gray-400 w-full text-left mt-1">
             {ensName
               ? ensName.length > 15
                 ? ensName.substring(0, 15) + "..."
