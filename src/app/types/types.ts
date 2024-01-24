@@ -3,10 +3,10 @@ import { Address } from "viem";
 //TODO clean up usdc Types
 export type MultiSig = {
   address: Address;
-  label: string;
+  label?: string;
   signers?: string[];
   threshold?: number;
-  balance?: BigInt;
-  usdc?: BigInt;
-  ens?: BigInt;
+  ethBalance?: BigInt;
+  usdcBalance?: BigInt;
+  ensBalance?: BigInt;
 };
