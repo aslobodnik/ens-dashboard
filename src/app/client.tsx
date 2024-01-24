@@ -33,7 +33,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import { createPublicClient, http, Address, formatUnits } from "viem";
 
-import { MultiSig } from "./types/types";
+import { ContractInfo, MultiSig } from "./types/types";
 import { useState } from "react";
 
 const alchemyUrl = process.env.ALCHEMY_URL;
@@ -44,7 +44,13 @@ const client = createPublicClient({
   transport,
 });
 
-export function Client({ multiSigData }: { multiSigData: MultiSig[] }) {
+export function Client({
+  multiSigData,
+  opsData,
+}: {
+  multiSigData: MultiSig[];
+  opsData: ContractInfo[];
+}) {
   const [selectedWg, setSelectedWg] = useState<string>("all");
   const [showZeroBalance, setShowZeroBalance] = useState<boolean>(false);
 
@@ -52,36 +58,27 @@ export function Client({ multiSigData }: { multiSigData: MultiSig[] }) {
     setShowZeroBalance(value);
   };
 
-  const isZero = (amount: BigInt | number, tokenDecimals: number): boolean => {
-    // Ensure amountNumber is always a number
-    const amountNumber =
-      typeof amount === "bigint"
-        ? parseFloat(formatUnits(amount, tokenDecimals))
-        : parseFloat(String(amount));
-    return amountNumber <= 0.01;
-  };
-
   const filteredData = multiSigData.filter((multisig) => {
     return (
       (selectedWg === "all" || multisig.label === selectedWg) &&
       (showZeroBalance ||
-        !isZero(multisig.balance, 18) ||
-        !isZero(multisig.usdc, 6) ||
-        !isZero(multisig.ens, 18))
+        !isZero(multisig.ethBalance || 0n, 18) ||
+        !isZero(multisig.usdcBalance || 0n, 6) ||
+        !isZero(multisig.ensBalance || 0n, 18))
     );
   });
 
   const totalEth = filteredData.reduce(
-    (acc, curr) => acc + toBigInt(curr.balance),
-    BigInt(0)
+    (acc, curr) => acc + (curr.ethBalance || 0n),
+    0n
   );
   const totalUsdc = filteredData.reduce(
-    (acc, curr) => acc + toBigInt(curr.usdc),
-    BigInt(0)
+    (acc, curr) => acc + (curr.usdcBalance || 0n),
+    0n
   );
   const totalEns = filteredData.reduce(
-    (acc, curr) => acc + toBigInt(curr.ens),
-    BigInt(0)
+    (acc, curr) => acc + (curr.ensBalance || 0n),
+    0n
   );
 
   return (
@@ -137,13 +134,13 @@ export function Client({ multiSigData }: { multiSigData: MultiSig[] }) {
                   ))}
                 </TableCell>
                 <TableCell className="text-right text-lg">
-                  {formatCurrency(multisig.balance as bigint, 18, 1)}
+                  {formatCurrency(multisig.ethBalance as bigint, 18, 1)}
                 </TableCell>
                 <TableCell className="text-right text-lg">
-                  {formatCurrency(multisig.usdc as bigint, 6, 0, true)}
+                  {formatCurrency(multisig.usdcBalance as bigint, 6, 0, true)}
                 </TableCell>
                 <TableCell className="text-right text-lg">
-                  {formatCurrency(multisig.ens as bigint, 18, 0, true)}
+                  {formatCurrency(multisig.ensBalance as bigint, 18, 0, true)}
                 </TableCell>
               </TableRow>
             ))}
@@ -171,12 +168,11 @@ export function Client({ multiSigData }: { multiSigData: MultiSig[] }) {
         {/*Mobile Table*/}
         <div>
           <Table className="sm:hidden w-full ">
-            {/* <TableCaption>ENS DAO Wallets</TableCaption> */}
             <TableHeader>
               <TableRow>
                 <TableHead className="text-center">
                   <Select onValueChange={(value) => setSelectedWg(value)}>
-                    <SelectTrigger className="w-[180px]">
+                    <SelectTrigger className="max-w-36">
                       <SelectValue placeholder="Working Group" />
                     </SelectTrigger>
                     <SelectContent className="text-lg">
@@ -187,14 +183,14 @@ export function Client({ multiSigData }: { multiSigData: MultiSig[] }) {
                     </SelectContent>
                   </Select>
                 </TableHead>
-                <TableHead className="text-center ">Signers</TableHead>
-                <TableHead className="text-center ">Balances</TableHead>
+                <TableHead className="text-center">Signers</TableHead>
+                <TableHead className="text-center  ">Balances</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredData.map((multisig, index) => (
                 <TableRow key={index}>
-                  <TableCell className="font-medium ">
+                  <TableCell className="font-medium truncate text-xs max-w-9 p-1">
                     <WalletAddress address={multisig.address} />
                     <div className="text-xs text-left pt-2 text-gray-400">
                       Signers: {multisig.threshold.toLocaleString()}/
@@ -205,7 +201,7 @@ export function Client({ multiSigData }: { multiSigData: MultiSig[] }) {
                     </div>
                   </TableCell>
 
-                  <TableCell className="flex flex-col w-fit text-nowrap flex-wrap">
+                  <TableCell className="flex flex-col max-w-28">
                     {multisig.signers.map((signer, signerIndex) => (
                       <DisplaySigner
                         key={signerIndex}
@@ -214,18 +210,28 @@ export function Client({ multiSigData }: { multiSigData: MultiSig[] }) {
                       />
                     ))}
                   </TableCell>
-                  <TableCell className="text-sm">
-                    <div className="flex text-right   font-mono flex-col">
+                  <TableCell className="text-xs">
+                    <div className="flex text-right font-mono flex-col">
                       <span>
-                        {formatCurrency(multisig.balance as bigint, 18, 1)}{" "}
+                        {formatCurrency(multisig.ethBalance as bigint, 18, 1)}{" "}
                         &nbsp;ETH
                       </span>
                       <span>
-                        {formatCurrency(multisig.usdc as bigint, 6, 0, true)}{" "}
+                        {formatCurrency(
+                          multisig.usdcBalance as bigint,
+                          6,
+                          0,
+                          true
+                        )}{" "}
                         USDC
                       </span>
                       <span>
-                        {formatCurrency(multisig.ens as bigint, 18, 0, true)}{" "}
+                        {formatCurrency(
+                          multisig.ensBalance as bigint,
+                          18,
+                          0,
+                          true
+                        )}{" "}
                         &nbsp;ENS
                       </span>
                     </div>
@@ -257,9 +263,7 @@ export function Client({ multiSigData }: { multiSigData: MultiSig[] }) {
           </Table>
         </div>
       </div>
-      <h1 className="text-3xl sm:mt-0 my-10 font-extrabold ">
-        Working Group Multisigs
-      </h1>
+      <ContractsTable opsData={opsData} />
     </main>
   );
 }
@@ -292,7 +296,7 @@ function DisplaySigner({
                 <AvatarFallback></AvatarFallback>
               </Avatar>
             )}
-            <span className="w-full text-xs mt-0 pl-0 sm:text-base text-left sm:mt-2 sm:pl-2 ">
+            <span className=" text-xs mt-0 pl-0 sm:text-base text-left sm:mt-2 sm:pl-2 ">
               {ensName || displayAddress}
             </span>
           </TooltipTrigger>
@@ -315,9 +319,13 @@ function WalletAddress({ address }: { address: Address }) {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger className="flex flex-col ">
-          <span className="w-full text-left">{displayAddress}</span>
-          <span className="text-xs  text-gray-400 w-full text-left mt-1">
-            {ensName}
+          <span className="w-full  text-xs   text-left">{displayAddress}</span>
+          <span className="text-xs  truncate text-gray-400 w-full text-left mt-1">
+            {ensName
+              ? ensName.length > 15
+                ? ensName.substring(0, 15) + "..."
+                : ensName
+              : "N/A"}
           </span>
         </TooltipTrigger>
         <TooltipContent copyText={address} className="">
@@ -344,16 +352,6 @@ function formatCurrency(
   }
 }
 
-function toBigInt(value: number | bigint | BigInt | null | undefined): bigint {
-  if (value === null || value === undefined) {
-    return BigInt(0);
-  } else if (typeof value === "number" || typeof value === "bigint") {
-    return BigInt(value);
-  } else {
-    throw new Error("Invalid type for conversion to bigint");
-  }
-}
-
 function formatShort(num: number): string {
   if (num < 1_000) return num.toString();
   if (num >= 1_000 && num < 1_000_000) return (num / 1_000).toFixed(1) + "k";
@@ -362,3 +360,77 @@ function formatShort(num: number): string {
   if (num >= 1_000_000_000) return (num / 1_000_000_000).toFixed(1) + "B";
   return num.toString(); // Fallback for very large numbers
 }
+
+function ContractsTable({ opsData }: { opsData: ContractInfo[] }) {
+  return (
+    <div>
+      <h2 className="text-3xl mt-10 sm:my-10 font-extrabold text-center">
+        DAO Operational Contracts
+      </h2>
+      <div className="overflow-x-auto mx-4 sm:w-full">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-1/3 sm:w-1/4 sm:text-lg text-center">
+                Contract
+              </TableHead>
+              <TableHead className="w-1/3 text-center sm:text-lg sm:w-1/4">
+                Description
+              </TableHead>
+              <TableHead className="w-1/3 text-right text-lg sm:w-1/2">
+                Balance
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+
+          <TableBody>
+            {opsData.map((contract, index) => (
+              <TableRow key={index}>
+                <TableCell className="font-medium sm:min-w-52">
+                  <div className="text-xs text-left pt-2 text-gray-400">
+                    <WalletAddress address={contract.address} />
+                  </div>
+                  <div className="text-xs text-left pt-1 text-gray-400">
+                    {contract.label || "N/A"}
+                  </div>
+                </TableCell>
+
+                <TableCell className="sm:min-w-56 max-w-96 flex-wrap">
+                  {contract.description}
+                </TableCell>
+
+                <TableCell className="text-right font-mono ">
+                  <div className="flex flex-col">
+                    <span>
+                      {formatCurrency(contract.ethBalance || 0n, 18, 1)}
+                      &nbsp;&nbsp;ETH
+                    </span>
+                    <span>
+                      {formatCurrency(contract.ensBalance || 0n, 18, 1, true)}
+                      &nbsp;&nbsp;ENS
+                    </span>
+                    <span>
+                      {formatCurrency(contract.usdcBalance || 0n, 6, 0, true)}
+                      &nbsp;USDC
+                    </span>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    </div>
+  );
+}
+
+//is zero checks if the balance is less than 0.01 or undefine, if so it returns true
+const isZero = (amount: bigint, tokenDecimals: number): boolean => {
+  if (amount === undefined) {
+    return true;
+  } else {
+    const amountNumber = parseFloat(formatUnits(amount, tokenDecimals));
+
+    return amountNumber <= 0.01;
+  }
+};
