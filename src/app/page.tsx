@@ -40,8 +40,6 @@ export default async function Home() {
     };
   });
 
-  console.log(opsData);
-
   return <Client multiSigData={multiSigData} opsData={opsData} />;
 }
 
