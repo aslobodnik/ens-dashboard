@@ -1,12 +1,17 @@
 import { Address } from "viem";
 
-//TODO clean up usdc Types
-export type MultiSig = {
+export type ContractInfo = {
   address: Address;
+  description?: string;
   label?: string;
-  signers?: string[];
-  threshold?: number;
-  ethBalance?: BigInt;
-  usdcBalance?: BigInt;
-  ensBalance?: BigInt;
+  ethBalance?: bigint;
+  usdcBalance?: bigint;
+  ensBalance?: bigint;
+  multisig?: boolean;
+};
+
+export type MultiSig = ContractInfo & {
+  signers: string[];
+  threshold: number;
+  multisig: boolean;
 };
