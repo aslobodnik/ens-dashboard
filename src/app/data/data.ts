@@ -71,3 +71,11 @@ export const opsContracts: ContractInfo[] = [
     description: "Stores DAO funds",
   },
 ];
+
+export const endowment: ContractInfo[] = [
+  {
+    address: "0x283Af0B28c62C092C9727F1Ee09c02CA627EB7F5",
+    label: "Endowment",
+    description: "Endowment invests DAO funds",
+  },
+];

@@ -1,20 +1,41 @@
 import { createPublicClient, http, Address } from "viem";
 import { Client } from "./client";
 import { mainnet } from "viem/chains";
-import { multiSigs, opsContracts } from "./data/data";
-import { ContractInfo, MultiSig } from "./types/types";
-import { abiBalanceOf, abiOwners, abiGetThreshold } from "./abi/abi";
+import { multiSigs, opsContracts, endowment } from "./data/data";
+import { ContractInfo, MultiSig, TokenDetails } from "./types/types";
+import {
+  abiBalanceOf,
+  abiOwners,
+  abiGetThreshold,
+  abiGetName,
+  abiGetSymbol,
+  abiGetDecimals,
+} from "./abi/abi";
 
 //TODO: Clean multsig types
 //TODO: Move avatar url getting to server side with valid / invalid flag
 
 const transport = http(process.env.SERVER_URL);
 
-const ENS_TOKEN_CONTRACT =
-  "0xC18360217D8F7Ab5e7c516566761Ea12Ce7F9D72" as Address;
+const ENS_TOKEN_CONTRACT = "0xC18360217D8F7Ab5e7c516566761Ea12Ce7F9D72";
 
-const USDC_TOKEN_CONTRACT =
-  "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48" as Address;
+const USDC_TOKEN_CONTRACT = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
+
+const tokenContracts = [
+  "0xC18360217D8F7Ab5e7c516566761Ea12Ce7F9D72",
+  "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  "0x59cD1C87501baa753d0B5B5Ab5D8416A45cD71DB",
+  "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+  "0xc3d688B66703497DAA19211EEdff47f25384cdc3",
+  "0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84",
+  "0xae78736Cd615f374D3085123A210448E74Fc6393",
+  "0x4d5F47FA6A74757f35C14fD3a6Ef8E3C9BC514E8",
+  "0xE95A203B1a91a908F9B9CE46459d101078c2c3cb",
+  "0x6b175474e89094c44da98b954eedeac495271d0f",
+  "0xA35b1B31Ce002FBF2058D22F30f95D405200A15b",
+  "0xDd1fE5AD401D4777cE89959b7fa587e569Bf125D",
+  "0xA17581A9E3356d9A858b789D68B4d866e593aE94",
+];
 
 const publicClient = createPublicClient({
   batch: {
@@ -40,7 +61,19 @@ export default async function Home() {
     };
   });
 
-  return <Client multiSigData={multiSigData} opsData={opsData} />;
+  const endowmentData = await fetchAllTokenDetails(
+    "0x4F2083f5fBede34C2714aFfb3105539775f7FE64"
+  );
+
+  console.log(endowmentData);
+
+  return (
+    <Client
+      multiSigData={multiSigData}
+      opsData={opsData}
+      endowmentData={endowmentData}
+    />
+  );
 }
 
 async function getMultiSigData({
@@ -144,4 +177,67 @@ async function getTokenBalance(
     functionName: "balanceOf",
     args: [userAddress],
   });
+}
+
+async function getTokenDetails(
+  tokenContractAddress: Address,
+  userAddress: Address
+): Promise<{
+  balance: bigint;
+  name: string;
+  symbol: string;
+  decimals: number;
+}> {
+  // Fetch the token balance
+  const balance = await publicClient.readContract({
+    address: tokenContractAddress,
+    abi: abiBalanceOf,
+    functionName: "balanceOf",
+    args: [userAddress],
+  });
+
+  // Fetch the token name
+  const name = (await publicClient.readContract({
+    address: tokenContractAddress,
+    abi: abiGetName,
+    functionName: "name",
+    args: [],
+  })) as string;
+
+  const symbol = (await publicClient.readContract({
+    address: tokenContractAddress,
+    abi: abiGetSymbol,
+    functionName: "symbol",
+    args: [],
+  })) as string;
+
+  const decimals = (await publicClient.readContract({
+    address: tokenContractAddress,
+    abi: abiGetDecimals,
+    functionName: "decimals",
+    args: [],
+  })) as number;
+
+  return {
+    balance,
+    name,
+    symbol,
+    decimals,
+  };
+}
+
+async function fetchAllTokenDetails(
+  userAddress: Address
+): Promise<TokenDetails[]> {
+  try {
+    const promises = tokenContracts.map((tokenContractAddress) =>
+      getTokenDetails(tokenContractAddress as Address, userAddress)
+    );
+
+    const results = await Promise.all(promises);
+    return results; // Return the array of token details
+  } catch (error) {
+    console.error("Error fetching token details:", error);
+    throw error; // Re-throw the error to handle it in the calling function
+  }
 }

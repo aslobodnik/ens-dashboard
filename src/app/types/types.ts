@@ -15,3 +15,10 @@ export type MultiSig = ContractInfo & {
   threshold: number;
   multisig: boolean;
 };
+
+export type TokenDetails = {
+  balance: bigint;
+  name: string;
+  symbol: string;
+  decimals: number;
+};

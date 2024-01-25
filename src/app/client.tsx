@@ -29,15 +29,17 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useEnsName } from "wagmi";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Address, formatUnits } from "viem";
-import { ContractInfo, MultiSig } from "./types/types";
+import { ContractInfo, MultiSig, TokenDetails } from "./types/types";
 import { useState } from "react";
 
 export function Client({
   multiSigData,
   opsData,
+  endowmentData,
 }: {
   multiSigData: MultiSig[];
   opsData: ContractInfo[];
+  endowmentData: TokenDetails[];
 }) {
   const [selectedWg, setSelectedWg] = useState<string>("all");
   const [showZeroBalance, setShowZeroBalance] = useState<boolean>(false);
@@ -267,6 +269,7 @@ export function Client({
         </div>
       </div>
       <ContractsTable opsData={opsData} />
+      <EndowmentTable endowmentData={endowmentData} />
     </main>
   );
 }
@@ -371,7 +374,7 @@ function formatCurrency(
 }
 
 function formatShort(num: number): string {
-  if (num < 1_000) return num.toString();
+  if (num < 1_000) return num.toFixed(1);
   if (num >= 1_000 && num < 1_000_000) return (num / 1_000).toFixed(1) + "k";
   if (num >= 1_000_000 && num < 1_000_000_000)
     return (num / 1_000_000).toFixed(1) + "m";
@@ -426,6 +429,60 @@ function ContractsTable({ opsData }: { opsData: ContractInfo[] }) {
                     <span>
                       {formatCurrency(contract.usdcBalance || 0n, 6, 0, true)}
                       &nbsp;USDC
+                    </span>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    </div>
+  );
+}
+
+function EndowmentTable({ endowmentData }: { endowmentData: TokenDetails[] }) {
+  const filteredData = endowmentData.filter((multisig) => {
+    return !isZero(multisig.balance || 0n, multisig.decimals);
+  });
+
+  return (
+    <div className=" w-full max-w-3xl ">
+      <h2 className="sm:text-3xl text-2xl mt-10 sm:my-10 font-extrabold text-center">
+        Endowment Balances
+      </h2>
+      <div className="overflow-x-auto mx-4 sm:w-full">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="sm:text-lg text-center">Token</TableHead>
+              <TableHead className="text-center sm:text-lg ">
+                Description
+              </TableHead>
+              <TableHead className=" text-right text-lg ">Balance</TableHead>
+            </TableRow>
+          </TableHeader>
+
+          <TableBody>
+            {filteredData.map((contract, index) => (
+              <TableRow key={index}>
+                <TableCell className="font-medium sm:min-w-52">
+                  {contract.symbol}
+                </TableCell>
+
+                <TableCell className="sm:min-w-56 max-w-96 flex-wrap">
+                  {contract.name}
+                </TableCell>
+
+                <TableCell className="text-right font-mono ">
+                  <div className="flex flex-col">
+                    <span>
+                      {formatCurrency(
+                        contract.balance || 0n,
+                        contract.decimals,
+                        1,
+                        true
+                      )}
                     </span>
                   </div>
                 </TableCell>
