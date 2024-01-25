@@ -90,11 +90,6 @@ export default async function Home() {
     return token;
   });
   console.log(endowmentData);
-  const totalUsdValue = endowmentData.reduce((accumulator, token) => {
-    return accumulator + (token.usdValue || 0n);
-  }, 0n); // Initial value of the accumulator is 0n
-
-  console.log(`Total USD Value: ${totalUsdValue}`);
 
   return (
     <Client
