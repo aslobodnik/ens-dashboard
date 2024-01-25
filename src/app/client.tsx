@@ -121,13 +121,13 @@ export function Client({
             {filteredData.map((multisig, index) => (
               <TableRow key={index}>
                 <TableCell className="font-medium text-base  min-w-52">
+                  <div className="text-left pt-2 text-gray-700">
+                    {multisig.label}
+                  </div>
                   <WalletAddress address={multisig.address} />
-                  <div className="text-left pt-2 text-gray-400">
+                  <div className="text-left  text-gray-400">
                     Signers: {multisig.threshold.toLocaleString()}/
                     {multisig.signers.length}
-                  </div>
-                  <div className="text-left pt-2 text-gray-400">
-                    {multisig.label}
                   </div>
                 </TableCell>
 
@@ -197,13 +197,13 @@ export function Client({
               {filteredData.map((multisig, index) => (
                 <TableRow key={index}>
                   <TableCell className="font-medium truncate text-xs max-w-9 p-1">
+                    <div className="text-xs text-left pt-2 text-gray-800">
+                      {multisig.label}
+                    </div>
                     <WalletAddress address={multisig.address} />
                     <div className="text-xs text-left pt-2 text-gray-400">
                       Signers: {multisig.threshold.toLocaleString()}/
                       {multisig.signers.length}
-                    </div>
-                    <div className="text-xs text-left pt-2 text-gray-400">
-                      {multisig.label}
                     </div>
                   </TableCell>
 
@@ -334,16 +334,16 @@ function WalletAddress({ address }: { address: Address }) {
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger className="flex flex-col">
-          <span className="w-full  text-xs sm:text-base  text-left">
-            {displayAddress}
-          </span>
-          <span className="text-xs sm:text-base truncate text-gray-400 w-full text-left mt-1">
+        <TooltipTrigger className="flex flex-col gap-1">
+          <span className="text-xs sm:text-base truncate text-gray-700 w-full text-left ">
             {ensName
               ? ensName.length > 15
                 ? ensName.substring(0, 15) + "..."
                 : ensName
               : ""}
+          </span>
+          <span className="w-full  text-xs sm:text-base  text-gray-400 text-left">
+            {displayAddress}
           </span>
         </TooltipTrigger>
         <TooltipContent
@@ -405,11 +405,11 @@ function ContractsTable({ opsData }: { opsData: ContractInfo[] }) {
             {opsData.map((contract, index) => (
               <TableRow key={index}>
                 <TableCell className="font-medium sm:min-w-52">
-                  <div className="text-xs sm:text-base text-left pt-2">
-                    <WalletAddress address={contract.address} />
-                  </div>
-                  <div className="text-xs sm:text-base text-left pt-1 text-gray-400">
+                  <div className="text-xs sm:text-base text-left text-gray-800">
                     {contract.label || "N/A"}
+                  </div>
+                  <div className="text-xs sm:text-base text-left ">
+                    <WalletAddress address={contract.address} />
                   </div>
                 </TableCell>
 
