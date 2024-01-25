@@ -86,7 +86,7 @@ export function Client({
 
   return (
     <main className="flex min-h-screen flex-col  items-center sm:p-24 mx-auto">
-      <h1 className="text-3xl sm:mt-0 my-10 font-extrabold ">
+      <h1 className="sm:text-3xl text-2xl sm:mt-0 my-10 font-extrabold ">
         Working Group Multisigs
       </h1>
       <div>
@@ -381,23 +381,19 @@ function formatShort(num: number): string {
 
 function ContractsTable({ opsData }: { opsData: ContractInfo[] }) {
   return (
-    <div>
-      <h2 className="text-3xl mt-10 sm:my-10 font-extrabold text-center">
+    <div className=" w-full max-w-3xl ">
+      <h2 className="sm:text-3xl text-2xl mt-10 sm:my-10 font-extrabold text-center">
         DAO Operational Contracts
       </h2>
       <div className="overflow-x-auto mx-4 sm:w-full">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-1/3 sm:w-1/4 sm:text-lg text-center">
-                Contract
-              </TableHead>
-              <TableHead className="w-1/3 text-center sm:text-lg sm:w-1/4">
+              <TableHead className="sm:text-lg text-center">Contract</TableHead>
+              <TableHead className="text-center sm:text-lg ">
                 Description
               </TableHead>
-              <TableHead className="w-1/3 text-right text-lg sm:w-1/2">
-                Balance
-              </TableHead>
+              <TableHead className=" text-right text-lg ">Balance</TableHead>
             </TableRow>
           </TableHeader>
 
