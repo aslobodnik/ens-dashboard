@@ -17,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+
 import {
   Tooltip,
   TooltipContent,
@@ -25,24 +26,11 @@ import {
 } from "@/components/ui/tooltip";
 
 import { Checkbox } from "@/components/ui/checkbox";
-
 import { useEnsName } from "wagmi";
-
-import { mainnet } from "viem/chains";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
-import { createPublicClient, http, Address, formatUnits } from "viem";
-
+import { Address, formatUnits } from "viem";
 import { ContractInfo, MultiSig } from "./types/types";
 import { useState } from "react";
-
-const alchemyUrl = process.env.ALCHEMY_URL;
-const transport = http(alchemyUrl);
-
-const client = createPublicClient({
-  chain: mainnet,
-  transport,
-});
 
 export function Client({
   multiSigData,
@@ -330,10 +318,19 @@ function WalletAddress({ address }: { address: Address }) {
   });
   const displayAddress =
     address.substring(0, 6) + "..." + address.substring(address.length - 4);
+  const handleAddressClick = async () => {
+    // Copy address to clipboard
+    await navigator.clipboard.writeText(address);
+
+    // Define the URL to open - replace with the appropriate URL format
+    const url = `https://etherscan.io/address/${address}`;
+    window.open(url, "_blank");
+  };
+
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger className="flex flex-col ">
+        <TooltipTrigger className="flex flex-col">
           <span className="w-full  text-xs sm:text-base  text-left">
             {displayAddress}
           </span>
@@ -345,7 +342,11 @@ function WalletAddress({ address }: { address: Address }) {
               : ""}
           </span>
         </TooltipTrigger>
-        <TooltipContent copyText={address} className="">
+        <TooltipContent
+          copyText={address}
+          onClick={handleAddressClick}
+          className=""
+        >
           {address}
         </TooltipContent>
       </Tooltip>
@@ -373,7 +374,7 @@ function formatShort(num: number): string {
   if (num < 1_000) return num.toString();
   if (num >= 1_000 && num < 1_000_000) return (num / 1_000).toFixed(1) + "k";
   if (num >= 1_000_000 && num < 1_000_000_000)
-    return (num / 1_000_000).toFixed(2) + "m";
+    return (num / 1_000_000).toFixed(1) + "m";
   if (num >= 1_000_000_000) return (num / 1_000_000_000).toFixed(1) + "B";
   return num.toString(); // Fallback for very large numbers
 }
