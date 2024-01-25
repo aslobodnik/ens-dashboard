@@ -510,7 +510,7 @@ function EndowmentTable({ endowmentData }: { endowmentData: TokenDetails[] }) {
                   {contract.usdValue
                     ? formatCurrency(
                         contract.usdValue,
-                        contract.decimals,
+                        contract.symbol === "cUSDCv3" ? 18 : contract.decimals,
                         1,
                         true
                       )

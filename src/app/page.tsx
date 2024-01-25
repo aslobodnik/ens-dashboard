@@ -64,8 +64,6 @@ export default async function Home() {
   );
   const rEthPrice = (parsedREthRate * parsedEthPrice) / 1000n;
 
-  console.log(parsedREthRate, parsedEthPrice, ethPrice, rEthRate);
-
   const multiSigData = await getMultiSigData({ multisigs: multiSigs });
 
   const balanceData = await getBalances({
@@ -96,11 +94,15 @@ export default async function Home() {
   const rEthTokens = ["rETH", "auraB-rETH-STABLE-vault"];
 
   endowmentData.map((token) => {
+    console.log(token.symbol);
     if (ethTokens.includes(token.symbol)) {
       // eth balue
       token.usdValue = token.balance * parsedEthPrice;
+      console.log(token.symbol, token.usdValue);
     } else if (rEthTokens.includes(token.symbol)) {
       token.usdValue = token.balance * rEthPrice;
+    } else if (token.symbol === "cUSDCv3") {
+      token.usdValue = token.balance * BigInt(1e12);
     } else {
       token.usdValue = token.balance;
     }
