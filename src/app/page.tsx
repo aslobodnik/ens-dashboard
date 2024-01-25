@@ -1,4 +1,11 @@
-import { createPublicClient, http, Address } from "viem";
+import {
+  createPublicClient,
+  http,
+  Address,
+  parseEther,
+  formatEther,
+  formatUnits,
+} from "viem";
 import { Client } from "./client";
 import { mainnet } from "viem/chains";
 import { multiSigs, opsContracts, endowment } from "./data/data";
@@ -11,16 +18,17 @@ import {
   abiGetSymbol,
   abiGetDecimals,
   abiPieOf,
+  abiREthRate,
+  abiUsdEthRate,
 } from "./abi/abi";
-
-//TODO: Clean multsig types
-//TODO: Move avatar url getting to server side with valid / invalid flag
 
 const transport = http(process.env.SERVER_URL);
 
 const ENS_TOKEN_CONTRACT = "0xC18360217D8F7Ab5e7c516566761Ea12Ce7F9D72";
 
 const USDC_TOKEN_CONTRACT = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
+const rEth = "0xae78736Cd615f374D3085123A210448E74Fc6393";
+const usdEth = "0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419";
 
 const tokenContracts = [
   "0xC18360217D8F7Ab5e7c516566761Ea12Ce7F9D72",
@@ -48,6 +56,16 @@ const publicClient = createPublicClient({
 });
 
 export default async function Home() {
+  const ethPrice = await getEthPrice();
+  const parsedEthPrice = BigInt(Math.round(Number(formatUnits(ethPrice, 8))));
+  const rEthRate = await getrEthRate();
+  const parsedREthRate = BigInt(
+    Math.round(Number(formatEther(rEthRate)) * 1000)
+  );
+  const rEthPrice = (parsedREthRate * parsedEthPrice) / 1000n;
+
+  console.log(parsedREthRate, parsedEthPrice, ethPrice, rEthRate);
+
   const multiSigData = await getMultiSigData({ multisigs: multiSigs });
 
   const balanceData = await getBalances({
@@ -80,16 +98,15 @@ export default async function Home() {
   endowmentData.map((token) => {
     if (ethTokens.includes(token.symbol)) {
       // eth balue
-      token.usdValue = token.balance * 2200n;
+      token.usdValue = token.balance * parsedEthPrice;
     } else if (rEthTokens.includes(token.symbol)) {
-      token.usdValue = token.balance * 2400n;
+      token.usdValue = token.balance * rEthPrice;
     } else {
       token.usdValue = token.balance;
     }
 
     return token;
   });
-  console.log(endowmentData);
 
   return (
     <Client
@@ -278,4 +295,20 @@ async function fetchAllTokenDetails(
     console.error("Error fetching token details:", error);
     throw error; // Re-throw the error to handle it in the calling function
   }
+}
+
+async function getEthPrice(): Promise<bigint> {
+  return await publicClient.readContract({
+    address: usdEth,
+    abi: abiUsdEthRate,
+    functionName: "latestAnswer",
+  });
+}
+
+async function getrEthRate(): Promise<bigint> {
+  return await publicClient.readContract({
+    address: rEth,
+    abi: abiREthRate,
+    functionName: "getExchangeRate",
+  });
 }

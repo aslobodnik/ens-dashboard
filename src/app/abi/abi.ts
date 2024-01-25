@@ -90,3 +90,23 @@ export const abiPieOf = [
     type: "function",
   },
 ] as const;
+
+export const abiREthRate = [
+  {
+    inputs: [],
+    name: "getExchangeRate",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+] as const;
+
+export const abiUsdEthRate = [
+  {
+    inputs: [],
+    name: "latestAnswer",
+    outputs: [{ internalType: "int256", name: "", type: "int256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+] as const;

@@ -443,9 +443,23 @@ function ContractsTable({ opsData }: { opsData: ContractInfo[] }) {
 }
 
 function EndowmentTable({ endowmentData }: { endowmentData: TokenDetails[] }) {
-  const filteredData = endowmentData.filter((multisig) => {
-    return !isZero(multisig.balance || 0n, multisig.decimals);
-  });
+  const filteredData = endowmentData
+    .filter((multisig) => {
+      return !isZero(multisig.balance || 0n, multisig.decimals);
+    })
+    .sort((a, b) => {
+      // Handle cases where label might be undefined or null
+      const labelA = a.usdValue || 0n;
+      const labelB = b.usdValue || 0n;
+
+      if (labelA > labelB) {
+        return -1;
+      }
+      if (labelA < labelB) {
+        return 1;
+      }
+      return 0;
+    });
 
   const totalUsdValue = endowmentData.reduce((accumulator, token) => {
     return accumulator + (token.usdValue || 0n);
@@ -458,7 +472,6 @@ function EndowmentTable({ endowmentData }: { endowmentData: TokenDetails[] }) {
       </h2>
       <div className="overflow-x-auto mx-4 sm:w-full">
         <Table>
-          <TableCaption>Work In Progress</TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead className="sm:text-lg text-center">Token</TableHead>
