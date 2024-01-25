@@ -10,6 +10,7 @@ import {
   abiGetName,
   abiGetSymbol,
   abiGetDecimals,
+  abiPieOf,
 } from "./abi/abi";
 
 //TODO: Clean multsig types
@@ -35,6 +36,7 @@ const tokenContracts = [
   "0xA35b1B31Ce002FBF2058D22F30f95D405200A15b",
   "0xDd1fE5AD401D4777cE89959b7fa587e569Bf125D",
   "0xA17581A9E3356d9A858b789D68B4d866e593aE94",
+  "0x373238337Bfe1146fb49989fc222523f83081dDb",
 ];
 
 const publicClient = createPublicClient({
@@ -64,8 +66,35 @@ export default async function Home() {
   const endowmentData = await fetchAllTokenDetails(
     "0x4F2083f5fBede34C2714aFfb3105539775f7FE64"
   );
+  const ethTokens = [
+    "aEthWETH",
+    "stETH",
+    "WETH",
+    "spWETH",
+    "cWETHv3",
+    "ankrETH",
+    "ETHx",
+  ];
+  const rEthTokens = ["rETH", "auraB-rETH-STABLE-vault"];
 
+  endowmentData.map((token) => {
+    if (ethTokens.includes(token.symbol)) {
+      // eth balue
+      token.usdValue = token.balance * 2200n;
+    } else if (rEthTokens.includes(token.symbol)) {
+      token.usdValue = token.balance * 2400n;
+    } else {
+      token.usdValue = token.balance;
+    }
+
+    return token;
+  });
   console.log(endowmentData);
+  const totalUsdValue = endowmentData.reduce((accumulator, token) => {
+    return accumulator + (token.usdValue || 0n);
+  }, 0n); // Initial value of the accumulator is 0n
+
+  console.log(`Total USD Value: ${totalUsdValue}`);
 
   return (
     <Client
@@ -182,48 +211,62 @@ async function getTokenBalance(
 async function getTokenDetails(
   tokenContractAddress: Address,
   userAddress: Address
-): Promise<{
-  balance: bigint;
-  name: string;
-  symbol: string;
-  decimals: number;
-}> {
+): Promise<TokenDetails> {
   // Fetch the token balance
-  const balance = await publicClient.readContract({
-    address: tokenContractAddress,
-    abi: abiBalanceOf,
-    functionName: "balanceOf",
-    args: [userAddress],
-  });
+  if (tokenContractAddress === "0x373238337Bfe1146fb49989fc222523f83081dDb") {
+    const balance = await publicClient.readContract({
+      address: tokenContractAddress,
+      abi: abiPieOf,
+      functionName: "pieOf",
+      args: [userAddress],
+    });
 
-  // Fetch the token name
-  const name = (await publicClient.readContract({
-    address: tokenContractAddress,
-    abi: abiGetName,
-    functionName: "name",
-    args: [],
-  })) as string;
+    const name = "DAI PIE";
+    const symbol = "DAI";
+    const decimals = 18;
+    return {
+      balance,
+      name,
+      symbol,
+      decimals,
+    };
+  } else {
+    const balance = await publicClient.readContract({
+      address: tokenContractAddress,
+      abi: abiBalanceOf,
+      functionName: "balanceOf",
+      args: [userAddress],
+    });
 
-  const symbol = (await publicClient.readContract({
-    address: tokenContractAddress,
-    abi: abiGetSymbol,
-    functionName: "symbol",
-    args: [],
-  })) as string;
+    // Fetch the token name
+    const name = (await publicClient.readContract({
+      address: tokenContractAddress,
+      abi: abiGetName,
+      functionName: "name",
+      args: [],
+    })) as string;
 
-  const decimals = (await publicClient.readContract({
-    address: tokenContractAddress,
-    abi: abiGetDecimals,
-    functionName: "decimals",
-    args: [],
-  })) as number;
+    const symbol = (await publicClient.readContract({
+      address: tokenContractAddress,
+      abi: abiGetSymbol,
+      functionName: "symbol",
+      args: [],
+    })) as string;
 
-  return {
-    balance,
-    name,
-    symbol,
-    decimals,
-  };
+    const decimals = (await publicClient.readContract({
+      address: tokenContractAddress,
+      abi: abiGetDecimals,
+      functionName: "decimals",
+      args: [],
+    })) as number;
+
+    return {
+      balance,
+      name,
+      symbol,
+      decimals,
+    };
+  }
 }
 
 async function fetchAllTokenDetails(

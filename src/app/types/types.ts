@@ -21,4 +21,5 @@ export type TokenDetails = {
   name: string;
   symbol: string;
   decimals: number;
+  usdValue?: bigint;
 };

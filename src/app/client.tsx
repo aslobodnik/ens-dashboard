@@ -4,6 +4,7 @@ import Image from "next/image";
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -446,6 +447,10 @@ function EndowmentTable({ endowmentData }: { endowmentData: TokenDetails[] }) {
     return !isZero(multisig.balance || 0n, multisig.decimals);
   });
 
+  const totalUsdValue = endowmentData.reduce((accumulator, token) => {
+    return accumulator + (token.usdValue || 0n);
+  }, 0n);
+
   return (
     <div className=" w-full max-w-3xl ">
       <h2 className="sm:text-3xl text-2xl mt-10 sm:my-10 font-extrabold text-center">
@@ -453,6 +458,7 @@ function EndowmentTable({ endowmentData }: { endowmentData: TokenDetails[] }) {
       </h2>
       <div className="overflow-x-auto mx-4 sm:w-full">
         <Table>
+          <TableCaption>Work In Progress</TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead className="sm:text-lg text-center">Token</TableHead>
@@ -460,17 +466,18 @@ function EndowmentTable({ endowmentData }: { endowmentData: TokenDetails[] }) {
                 Description
               </TableHead>
               <TableHead className=" text-right text-lg ">Balance</TableHead>
+              <TableHead className=" text-right text-lg ">USD Value</TableHead>
             </TableRow>
           </TableHeader>
 
           <TableBody>
             {filteredData.map((contract, index) => (
               <TableRow key={index}>
-                <TableCell className="font-medium sm:min-w-52">
+                <TableCell className="font-medium sm:min-w-48">
                   {contract.symbol}
                 </TableCell>
 
-                <TableCell className="sm:min-w-56 max-w-96 flex-wrap">
+                <TableCell className="sm:min-w-24 max-w-96 flex-wrap">
                   {contract.name}
                 </TableCell>
 
@@ -486,8 +493,26 @@ function EndowmentTable({ endowmentData }: { endowmentData: TokenDetails[] }) {
                     </span>
                   </div>
                 </TableCell>
+                <TableCell className="text-right font-mono ">
+                  {contract.usdValue
+                    ? formatCurrency(
+                        contract.usdValue,
+                        contract.decimals,
+                        1,
+                        true
+                      )
+                    : "N/A"}
+                </TableCell>
               </TableRow>
             ))}
+            <TableRow className="text-lg font-bold">
+              <TableCell colSpan={3} className="text-right">
+                Total
+              </TableCell>
+              <TableCell className="text-right">
+                ${formatCurrency(totalUsdValue, 18, 1, true)}
+              </TableCell>
+            </TableRow>
           </TableBody>
         </Table>
       </div>
