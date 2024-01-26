@@ -22,4 +22,5 @@ export type TokenDetails = {
   symbol: string;
   decimals: number;
   usdValue?: bigint;
+  address?: Address;
 };

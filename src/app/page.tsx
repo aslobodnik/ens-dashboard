@@ -243,6 +243,7 @@ async function getTokenDetails(
       name,
       symbol,
       decimals,
+      address: tokenContractAddress,
     };
   } else {
     const balance = await publicClient.readContract({
@@ -279,6 +280,7 @@ async function getTokenDetails(
       name,
       symbol,
       decimals,
+      address: tokenContractAddress,
     };
   }
 }
