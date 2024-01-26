@@ -49,10 +49,7 @@ export const multiSigs: ContractInfo[] = [
     address: "0x9718ba71dC1284842fcE66dC3e34DFFC6C630074",
     label: "Ecosystem",
   },
-  {
-    address: "0x4F2083f5fBede34C2714aFfb3105539775f7FE64",
-    label: "Ecosystem",
-  },
+
   {
     address: "0xB162Bf7A7fD64eF32b787719335d06B2780e31D1",
     label: "Metagov",
@@ -74,7 +71,7 @@ export const opsContracts: ContractInfo[] = [
 
 export const endowment: ContractInfo[] = [
   {
-    address: "0x283Af0B28c62C092C9727F1Ee09c02CA627EB7F5",
+    address: "0x4F2083f5fBede34C2714aFfb3105539775f7FE64",
     label: "Endowment",
     description: "Endowment invests DAO funds",
   },
