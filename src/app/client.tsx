@@ -326,7 +326,14 @@ function WalletAddress({ address }: { address: Address }) {
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger className="flex flex-col gap-1">
+        <TooltipTrigger
+          onClick={() =>
+            openEtherScan({
+              address: address,
+            })
+          }
+          className="flex flex-col gap-1"
+        >
           <span className="text-xs sm:text-base truncate text-gray-700 w-full text-left ">
             {ensName
               ? ensName.length > 15
@@ -485,7 +492,16 @@ function EndowmentTable({ endowmentData }: { endowmentData: TokenDetails[] }) {
                 <TableCell className="font-medium sm:min-w-48">
                   <TooltipProvider>
                     <Tooltip>
-                      <TooltipTrigger className="flex flex-col gap-1">
+                      <TooltipTrigger
+                        onClick={() =>
+                          openEtherScan({
+                            address:
+                              contract.address ||
+                              "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF",
+                          })
+                        }
+                        className="flex flex-col gap-1"
+                      >
                         {" "}
                         {contract.symbol}
                       </TooltipTrigger>
