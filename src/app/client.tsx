@@ -470,9 +470,25 @@ function EndowmentTable({ endowmentData }: { endowmentData: TokenDetails[] }) {
 
   return (
     <div className=" w-full max-w-3xl ">
-      <h2 className="sm:text-3xl text-2xl mt-10 sm:my-10 font-extrabold text-center">
-        Endowment Balances
+      <h2 className=" flex flex-col sm:text-3xl text-2xl mt-10 sm:my-10 font-extrabold text-center">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger> Endowment Balances</TooltipTrigger>
+            <TooltipContent
+              copyText="0x4F2083f5fBede34C2714aFfb3105539775f7FE64"
+              onClick={() =>
+                openEtherScan({
+                  address: "0x4F2083f5fBede34C2714aFfb3105539775f7FE64",
+                })
+              }
+              className=" font-normal"
+            >
+              0x4F2083f5fBede34C2714aFfb3105539775f7FE64
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </h2>
+
       <div className="overflow-x-auto mx-4 sm:w-full">
         <Table>
           <TableHeader>

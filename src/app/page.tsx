@@ -233,7 +233,7 @@ async function getTokenDetails(
       args: [userAddress],
     });
 
-    const name = "DSR Manager";
+    const name = "Maker: DSR Manager";
     const symbol = "DAI";
     const decimals = 18;
     return {
