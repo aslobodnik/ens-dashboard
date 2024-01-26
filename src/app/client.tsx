@@ -322,14 +322,6 @@ function WalletAddress({ address }: { address: Address }) {
   });
   const displayAddress =
     address.substring(0, 6) + "..." + address.substring(address.length - 4);
-  const handleAddressClick = async () => {
-    // Copy address to clipboard
-    await navigator.clipboard.writeText(address);
-
-    // Define the URL to open - replace with the appropriate URL format
-    const url = `https://etherscan.io/address/${address}`;
-    window.open(url, "_blank");
-  };
 
   return (
     <TooltipProvider>
@@ -348,7 +340,11 @@ function WalletAddress({ address }: { address: Address }) {
         </TooltipTrigger>
         <TooltipContent
           copyText={address}
-          onClick={handleAddressClick}
+          onClick={() =>
+            openEtherScan({
+              address: address,
+            })
+          }
           className=""
         >
           {address}
@@ -487,7 +483,27 @@ function EndowmentTable({ endowmentData }: { endowmentData: TokenDetails[] }) {
             {filteredData.map((contract, index) => (
               <TableRow key={index}>
                 <TableCell className="font-medium sm:min-w-48">
-                  {contract.symbol}
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger className="flex flex-col gap-1">
+                        {" "}
+                        {contract.symbol}
+                      </TooltipTrigger>
+                      <TooltipContent
+                        copyText={contract.address || ""}
+                        onClick={() =>
+                          openEtherScan({
+                            address:
+                              contract.address ||
+                              "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF",
+                          })
+                        }
+                        // className=""
+                      >
+                        {contract.address}
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </TableCell>
 
                 <TableCell className="sm:min-w-24 max-w-96 flex-wrap">
@@ -543,3 +559,12 @@ const isZero = (amount: bigint, tokenDecimals: number): boolean => {
     return amountNumber <= 0.01;
   }
 };
+
+async function openEtherScan({ address }: { address: Address }) {
+  // Copy address to clipboard
+  await navigator.clipboard.writeText(address);
+
+  // Define the URL to open - replace with the appropriate URL format
+  const url = `https://etherscan.io/address/${address}`;
+  window.open(url, "_blank");
+}
