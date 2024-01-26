@@ -94,11 +94,9 @@ export default async function Home() {
   const rEthTokens = ["rETH", "auraB-rETH-STABLE-vault"];
 
   endowmentData.map((token) => {
-    console.log(token.symbol);
     if (ethTokens.includes(token.symbol)) {
       // eth balue
       token.usdValue = token.balance * parsedEthPrice;
-      console.log(token.symbol, token.usdValue);
     } else if (rEthTokens.includes(token.symbol)) {
       token.usdValue = token.balance * rEthPrice;
     } else if (token.symbol === "cUSDCv3") {
@@ -235,7 +233,7 @@ async function getTokenDetails(
       args: [userAddress],
     });
 
-    const name = "DAI PIE";
+    const name = "DSR Manager";
     const symbol = "DAI";
     const decimals = 18;
     return {
