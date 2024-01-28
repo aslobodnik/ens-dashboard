@@ -139,13 +139,13 @@ export function Client({
                     />
                   ))}
                 </TableCell>
-                <TableCell className="text-right text-lg">
+                <TableCell className="text-right font-mono  text-lg">
                   {formatCurrency(multisig.ethBalance as bigint, 18, 1)}
                 </TableCell>
-                <TableCell className="text-right text-lg">
+                <TableCell className="text-right font-mono  text-lg">
                   {formatCurrency(multisig.usdcBalance as bigint, 6, 0, true)}
                 </TableCell>
-                <TableCell className="text-right text-lg">
+                <TableCell className="text-right font-mono  text-lg">
                   {formatCurrency(multisig.ensBalance as bigint, 18, 0, true)}
                 </TableCell>
               </TableRow>
