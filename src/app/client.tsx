@@ -89,13 +89,16 @@ export function Client({
     0n
   );
 
+  const date = new Date(Number(block));
+  console.log(date.toString());
+
   return (
     <main className="flex min-h-screen flex-col  items-center sm:p-24 mx-auto">
       <h1 className="sm:text-3xl text-2xl sm:mt-0 my-10 font-extrabold ">
         Working Group Multisigs
       </h1>
       <div className="absolute mt-9 text-xs  text-gray-200">
-        {block.toLocaleString()}
+        {date.toLocaleDateString()}
       </div>
       <div>
         {/*Desktop Table*/}

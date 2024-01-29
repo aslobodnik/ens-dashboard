@@ -108,14 +108,14 @@ export default async function Home() {
 
     return token;
   });
-  const block = await publicClient.getBlockNumber();
+  const blockTimestamp = (await publicClient.getBlock()).timestamp * 1000n;
 
   return (
     <Client
       multiSigData={multiSigData}
       opsData={opsData}
       endowmentData={endowmentData}
-      block={block}
+      block={blockTimestamp}
     />
   );
 }
