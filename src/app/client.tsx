@@ -37,10 +37,12 @@ export function Client({
   multiSigData,
   opsData,
   endowmentData,
+  block,
 }: {
   multiSigData: MultiSig[];
   opsData: ContractInfo[];
   endowmentData: TokenDetails[];
+  block: bigint;
 }) {
   const [selectedWg, setSelectedWg] = useState<string>("all");
   const [showZeroBalance, setShowZeroBalance] = useState<boolean>(false);
@@ -92,6 +94,9 @@ export function Client({
       <h1 className="sm:text-3xl text-2xl sm:mt-0 my-10 font-extrabold ">
         Working Group Multisigs
       </h1>
+      <div className="absolute mt-9 text-xs  text-gray-200">
+        {block.toLocaleString()}
+      </div>
       <div>
         {/*Desktop Table*/}
         <Table className="hidden sm:block">
@@ -139,13 +144,13 @@ export function Client({
                     />
                   ))}
                 </TableCell>
-                <TableCell className="text-right font-mono  text-lg">
+                <TableCell className="text-right font-mono  ">
                   {formatCurrency(multisig.ethBalance as bigint, 18, 1)}
                 </TableCell>
-                <TableCell className="text-right font-mono  text-lg">
+                <TableCell className="text-right font-mono  ">
                   {formatCurrency(multisig.usdcBalance as bigint, 6, 0, true)}
                 </TableCell>
-                <TableCell className="text-right font-mono  text-lg">
+                <TableCell className="text-right font-mono  ">
                   {formatCurrency(multisig.ensBalance as bigint, 18, 0, true)}
                 </TableCell>
               </TableRow>
