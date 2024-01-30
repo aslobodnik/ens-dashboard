@@ -23,6 +23,7 @@ import {
 } from "./abi/abi";
 
 const transport = http(process.env.SERVER_URL);
+export const revalidate = 3600;
 
 const ENS_TOKEN_CONTRACT = "0xC18360217D8F7Ab5e7c516566761Ea12Ce7F9D72";
 
