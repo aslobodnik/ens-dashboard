@@ -58,19 +58,19 @@ export const multiSigs: ContractInfo[] = [
 
 export const opsContracts: ContractInfo[] = [
   {
-    address: "0x283Af0B28c62C092C9727F1Ee09c02CA627EB7F5",
-    label: "ENS Controller",
-    description: "Collects ETH from ENS registrations",
-  },
-  {
     address: "0x253553366Da8546fC250F225fe3d25d0C782303b",
-    label: "New ENS Controller",
-    description: "Collects ETH from ENS registrations",
+    label: "Controller",
+    description: "Collects ETH from .eth registrations",
   },
   {
     address: "0xFe89cc7aBB2C4183683ab71653C4cdc9B02D44b7",
     label: "ENS Wallet",
     description: "Stores DAO funds",
+  },
+  {
+    address: "0x283Af0B28c62C092C9727F1Ee09c02CA627EB7F5",
+    label: "Legacy Controller",
+    description: "Collects ETH from .eth registrations",
   },
 ];
 
