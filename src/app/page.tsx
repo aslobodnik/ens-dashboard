@@ -52,6 +52,7 @@ const tokenContracts = [
   "0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0", // WSTETH
   "0xe95a203b1a91a908f9b9ce46459d101078c2c3cb", // ANKRETH
   "0x1BA8603DA702602A8657980e825A6DAa03Dee93a", // USDCx
+  "0x98C23E9d8f34FEFb1B7BD6a91B7FF122F4e16F5c", // USDC aave
 ];
 
 const publicClient = createPublicClient({
@@ -109,7 +110,7 @@ export default async function Home() {
       token.usdValue = token.balance * parsedEthPrice;
     } else if (rEthTokens.includes(token.symbol)) {
       token.usdValue = token.balance * rEthPrice;
-    } else if (token.symbol === "cUSDCv3") {
+    } else if (token.symbol === "cUSDCv3" || token.symbol === "aEthUSDC") {
       token.usdValue = token.balance * BigInt(1e12);
     } else {
       token.usdValue = token.balance;
