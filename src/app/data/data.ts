@@ -6,6 +6,10 @@ export const multiSigs: ContractInfo[] = [
     label: "Public Goods",
   },
   {
+    address: "0xebA76C907F02BA13064EDAD7876Fe51D9d856F62",
+    label: "Public Goods",
+  },
+  {
     address: "0x2686A8919Df194aA7673244549E68D42C1685d03",
     label: "Ecosystem",
   },
@@ -19,10 +23,6 @@ export const multiSigs: ContractInfo[] = [
   },
   {
     address: "0x9B9c249Be04dd433c7e8FbBF5E61E6741b89966D",
-    label: "Ecosystem",
-  },
-  {
-    address: "0x0d06a817584ac378849f03df6f11a9ad67dd786d",
     label: "Ecosystem",
   },
   {
