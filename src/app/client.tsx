@@ -92,14 +92,27 @@ export function Client({
   const date = new Date(Number(block));
   console.log(date.toString());
 
+  const totalOpsUsdValue = opsData.reduce((accumulator, contract) => {
+    return accumulator + (contract.usdValue || 0n);
+  }, 0n);
+
+  const totalEndowmentUsdValue = endowmentData.reduce((accumulator, token) => {
+    return accumulator + (token.usdValue || 0n);
+  }, 0n);
+
+  // Combine the two totals into a grand total
+  const grandTotalUsdValue = totalOpsUsdValue + totalEndowmentUsdValue;
+
   return (
     <main className="flex min-h-screen flex-col  items-center sm:p-24 mx-auto">
+      <p>
+        DAO $ Excludes ENS: ${formatCurrency(grandTotalUsdValue, 18, 1, true)}
+      </p>
+      <ContractsTable opsData={opsData} />
+      <EndowmentTable endowmentData={endowmentData} />
       <h1 className="sm:text-3xl text-2xl sm:mt-0 my-10 font-extrabold ">
         Working Group Multisigs
       </h1>
-      <div className="absolute mt-9 text-xs  text-gray-200">
-        {date.toLocaleDateString()}
-      </div>
       <div>
         {/*Desktop Table*/}
         <Table className="hidden sm:block">
@@ -277,8 +290,9 @@ export function Client({
           </Table>
         </div>
       </div>
-      <ContractsTable opsData={opsData} />
-      <EndowmentTable endowmentData={endowmentData} />
+      <div className=" mt-9 text-xs  text-gray-200">
+        {date.toLocaleDateString()}
+      </div>
     </main>
   );
 }
@@ -395,6 +409,10 @@ function formatShort(num: number): string {
 }
 
 function ContractsTable({ opsData }: { opsData: ContractInfo[] }) {
+  const totalUsdValue = opsData.reduce((accumulator, contract) => {
+    return accumulator + (contract.usdValue || 0n);
+  }, 0n);
+
   return (
     <div className=" w-full max-w-3xl ">
       <h2 className="sm:text-3xl text-2xl mt-10 sm:my-10 font-extrabold text-center">
@@ -428,7 +446,7 @@ function ContractsTable({ opsData }: { opsData: ContractInfo[] }) {
                   {contract.description}
                 </TableCell>
 
-                <TableCell className="text-right font-mono ">
+                <TableCell className="text-right font-mono">
                   <div className="flex flex-col">
                     <span>
                       {formatCurrency(contract.ethBalance || 0n, 18, 1)}
@@ -446,6 +464,14 @@ function ContractsTable({ opsData }: { opsData: ContractInfo[] }) {
                 </TableCell>
               </TableRow>
             ))}
+            <TableRow className="text-lg font-bold">
+              <TableCell colSpan={2} className="text-right">
+                Total
+              </TableCell>
+              <TableCell className="text-right">
+                ${formatCurrency(totalUsdValue, 18, 1, true)}
+              </TableCell>
+            </TableRow>
           </TableBody>
         </Table>
       </div>
@@ -566,7 +592,10 @@ function EndowmentTable({ endowmentData }: { endowmentData: TokenDetails[] }) {
                   {contract.usdValue
                     ? formatCurrency(
                         contract.usdValue,
-                        contract.symbol === "cUSDCv3" ? 18 : contract.decimals,
+                        contract.symbol === "cUSDCv3" ||
+                          contract.symbol === "aEthUSDC"
+                          ? 18
+                          : contract.decimals,
                         1,
                         true
                       )

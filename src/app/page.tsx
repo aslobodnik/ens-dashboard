@@ -81,9 +81,17 @@ export default async function Home() {
   // Merge balance data back into opsContracts
   const opsData = opsContracts.map((contract) => {
     const balanceInfo = balanceData.find((b) => b.address === contract.address);
+    const usdValue =
+      (balanceInfo?.ethBalance
+        ? balanceInfo.ethBalance * parsedEthPrice
+        : BigInt(0)) +
+      (balanceInfo?.usdcBalance
+        ? balanceInfo.usdcBalance * BigInt(1e12)
+        : BigInt(0));
     return {
       ...contract,
       ...balanceInfo,
+      usdValue,
     };
   });
 
@@ -118,6 +126,7 @@ export default async function Home() {
 
     return token;
   });
+
   const blockTimestamp = (await publicClient.getBlock()).timestamp * 1000n;
 
   return (
