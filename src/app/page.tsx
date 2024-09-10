@@ -98,6 +98,8 @@ export default async function Home() {
     "ankrETH",
     "ETHx",
     "osETH",
+    "aurawstETH-WETH-BPT-vault",
+    "osETH/wETH-BPT-gauge",
   ];
   const rEthTokens = ["rETH", "auraB-rETH-STABLE-vault"];
 
