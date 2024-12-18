@@ -108,7 +108,8 @@ export function Client({
       <ContractsTable opsData={opsData} />
       <EndowmentTable endowmentData={endowmentData} />
       <div className="mb-10 italic">
-        Total DAO Assets (Excluding $ENS): $105.6m
+        Total DAO Assets (Excluding $ENS):{" "}
+        {formatCurrency(grandTotalUsdValue, 18, 0)}
       </div>
       <h1 className="sm:text-3xl text-2xl sm:mt-0 my-10 font-extrabold ">
         Working Group Multisigs
