@@ -1,7 +1,7 @@
 import { createPublicClient, http } from "viem";
 import { mainnet } from "viem/chains";
 
-const alchemyUrl = process.env.ALCHEMY_URL;
+const alchemyUrl = process.env.NEXT_PUBLIC_ALCHEMY_URL;
 const transport = http(alchemyUrl);
 
 const client = createPublicClient({
