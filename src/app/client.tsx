@@ -292,7 +292,7 @@ export function Client({
         </div>
       </div>
       <div className=" mt-9 text-xs  text-gray-200">
-        {date.toLocaleDateString()}
+        {date.toLocaleDateString()} created by slobo.eth
       </div>
     </main>
   );
