@@ -23,6 +23,9 @@ const data = await client.readContract({
   address: "0xBa0c461b22d918FB1F52fEF556310230d177D1F2",
   abi: abi,
   functionName: "getOwners",
+  factory: undefined,
+  factoryData: undefined,
+  stateOverride: undefined,
 });
 
 function Profile() {}

@@ -22,7 +22,7 @@ import {
   abiUsdEthRate,
 } from "./abi/abi";
 
-const transport = http(process.env.SERVER_URL);
+const transport = http(process.env.NEXT_PUBLIC_ALCHEMY_URL);
 export const revalidate = 3600;
 
 const ENS_TOKEN_CONTRACT = "0xC18360217D8F7Ab5e7c516566761Ea12Ce7F9D72";
@@ -65,7 +65,14 @@ const publicClient = createPublicClient({
 
 export default async function Home() {
   const ethPrice = await getEthPrice();
+
+  if (ethPrice === null) {
+    console.error("Failed to fetch ETH price. Using a default value.");
+    return null; // or handle this scenario as needed, e.g., use a fallback price
+  }
+
   const parsedEthPrice = BigInt(Math.round(Number(formatUnits(ethPrice, 8))));
+
   const rEthRate = await getrEthRate();
   const parsedREthRate = BigInt(
     Math.round(Number(formatEther(rEthRate)) * 1000)
@@ -114,7 +121,6 @@ export default async function Home() {
 
   endowmentData.map((token) => {
     if (ethTokens.includes(token.symbol)) {
-      // eth balue
       token.usdValue = token.balance * parsedEthPrice;
     } else if (rEthTokens.includes(token.symbol)) {
       token.usdValue = token.balance * rEthPrice;
@@ -206,12 +212,18 @@ async function getMultiSigInfo({
       address,
       abi: abiOwners,
       functionName: "getOwners",
+      factory: undefined,
+      factoryData: undefined,
+      stateOverride: undefined,
     });
 
     const threshold = await publicClient.readContract({
       address,
       abi: abiGetThreshold,
       functionName: "getThreshold",
+      factory: undefined,
+      factoryData: undefined,
+      stateOverride: undefined,
     });
 
     return {
@@ -239,6 +251,9 @@ async function getTokenBalance(
     abi: abiBalanceOf,
     functionName: "balanceOf",
     args: [userAddress],
+    factory: undefined,
+    factoryData: undefined,
+    stateOverride: undefined,
   });
 }
 
@@ -253,6 +268,9 @@ async function getTokenDetails(
       abi: abiPieOf,
       functionName: "pieOf",
       args: [userAddress],
+      factory: undefined,
+      factoryData: undefined,
+      stateOverride: undefined,
     });
 
     const name = "Maker: DSR Manager";
@@ -271,6 +289,9 @@ async function getTokenDetails(
       abi: abiBalanceOf,
       functionName: "balanceOf",
       args: [userAddress],
+      factory: undefined,
+      factoryData: undefined,
+      stateOverride: undefined,
     });
 
     // Fetch the token name
@@ -279,6 +300,9 @@ async function getTokenDetails(
       abi: abiGetName,
       functionName: "name",
       args: [],
+      factory: undefined,
+      factoryData: undefined,
+      stateOverride: undefined,
     })) as string;
 
     const symbol = (await publicClient.readContract({
@@ -286,6 +310,9 @@ async function getTokenDetails(
       abi: abiGetSymbol,
       functionName: "symbol",
       args: [],
+      factory: undefined,
+      factoryData: undefined,
+      stateOverride: undefined,
     })) as string;
 
     const decimals = (await publicClient.readContract({
@@ -293,6 +320,9 @@ async function getTokenDetails(
       abi: abiGetDecimals,
       functionName: "decimals",
       args: [],
+      factory: undefined,
+      factoryData: undefined,
+      stateOverride: undefined,
     })) as number;
 
     return {
@@ -321,12 +351,19 @@ async function fetchAllTokenDetails(
   }
 }
 
-async function getEthPrice(): Promise<bigint> {
-  return await publicClient.readContract({
-    address: usdEth,
-    abi: abiUsdEthRate,
-    functionName: "latestAnswer",
-  });
+async function getEthPrice(): Promise<bigint | null> {
+  try {
+    const [, answer] = await publicClient.readContract({
+      address: usdEth,
+      abi: abiUsdEthRate,
+      functionName: "latestRoundData",
+      blockTag: "latest", // Fetch the latest block data
+    });
+    return answer;
+  } catch (error) {
+    console.error("Error fetching ETH price:", error);
+    return null;
+  }
 }
 
 async function getrEthRate(): Promise<bigint> {
@@ -334,5 +371,8 @@ async function getrEthRate(): Promise<bigint> {
     address: rEth,
     abi: abiREthRate,
     functionName: "getExchangeRate",
+    factory: undefined,
+    factoryData: undefined,
+    stateOverride: undefined,
   });
 }
