@@ -106,12 +106,13 @@ export function Client({
   return (
     <main className="flex min-h-screen flex-col  items-center sm:p-24 mx-auto">
       <ContractsTable opsData={opsData} />
+      {/* <EndowmentTable endowmentData={endowmentData} 
       <EndowmentTable endowmentData={endowmentData} />
       <div className="mb-10 italic">
         Total DAO Assets (Excluding $ENS):{" "}
         {formatCurrency(grandTotalUsdValue, 18, 0)}
-      </div>
-      <h1 className="sm:text-3xl text-2xl sm:mt-0 my-10 font-extrabold ">
+      </div>/> */}
+      <h1 className="sm:text-3xl pt-10 text-2xl sm:mt-0 my-10 font-extrabold ">
         Working Group Multisigs
       </h1>
       <div>
