@@ -32,6 +32,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Address, formatUnits } from "viem";
 import { ContractInfo, MultiSig, TokenDetails } from "./types/types";
 import { useState } from "react";
+import Link from "next/link";
 
 export function Client({
   multiSigData,
@@ -293,7 +294,12 @@ export function Client({
         </div>
       </div>
       <div className=" mt-9 text-xs  text-gray-200">
-        {date.toLocaleDateString()} created by slobo.eth
+        {date.toLocaleDateString()} created by slobo.eth <br />
+        <br />
+        For governance insights, visit{" "}
+        <Link href="https://votingpower.xyz" className="text-blue-200">
+          votingpower.xyz
+        </Link>
       </div>
     </main>
   );
