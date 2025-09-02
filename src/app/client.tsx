@@ -31,18 +31,17 @@ import { useEnsName } from "wagmi";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Address, formatUnits } from "viem";
 import { ContractInfo, MultiSig, TokenDetails } from "./types/types";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 
 export function Client({
   multiSigData,
   opsData,
-  endowmentData,
+
   block,
 }: {
   multiSigData: MultiSig[];
   opsData: ContractInfo[];
-  endowmentData: TokenDetails[];
   block: bigint;
 }) {
   const [selectedWg, setSelectedWg] = useState<string>("all");
@@ -97,29 +96,16 @@ export function Client({
     return accumulator + (contract.usdValue || 0n);
   }, 0n);
 
-  const totalEndowmentUsdValue = endowmentData.reduce((accumulator, token) => {
-    return accumulator + (token.usdValue || 0n);
-  }, 0n);
-
-  // Combine the two totals into a grand total
-  const grandTotalUsdValue = totalOpsUsdValue + totalEndowmentUsdValue;
-
   return (
     <main className="flex min-h-screen flex-col  items-center sm:p-24 mx-auto">
       <ContractsTable opsData={opsData} />
-      {/* <EndowmentTable endowmentData={endowmentData} 
-      <EndowmentTable endowmentData={endowmentData} />
-      <div className="mb-10 italic">
-        Total DAO Assets (Excluding $ENS):{" "}
-        {formatCurrency(grandTotalUsdValue, 18, 0)}
-      </div>/> */}
+
       <h1 className="sm:text-3xl pt-10 text-2xl sm:mt-0 my-10 font-extrabold ">
         Working Group Multisigs
       </h1>
       <div>
         {/*Desktop Table*/}
         <Table className="hidden sm:block">
-          {/* <TableCaption>ENS DAO Wallets</TableCaption> */}
           <TableHeader>
             <TableRow>
               <TableHead className="w-[100px]  text-lg text-center">
@@ -315,9 +301,35 @@ function DisplaySigner({
   const { data: ensName, isLoading: isLoadingEnsName } = useEnsName({
     address,
   });
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const displayAddress =
     address.substring(0, 6) + "..." + address.substring(address.length - 4);
+
+  useEffect(() => {
+    const fetchAvatarUrl = async () => {
+      if (address) {
+        setLoading(true);
+        try {
+          const response = await fetch(
+            `https://ens-api.slobo.xyz/address/${address}`
+          );
+          if (response.ok) {
+            const data = await response.json();
+            if (data.avatar?.lg) {
+              setAvatarUrl(data.avatar.lg);
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching avatar URL:", error);
+        }
+        setLoading(false);
+      }
+    };
+
+    fetchAvatarUrl();
+  }, [address]);
 
   return (
     <span className="py-1">
@@ -328,7 +340,7 @@ function DisplaySigner({
               <Avatar className="w-10 h-10 drop-shadow-md">
                 <AvatarImage
                   className="cursor-pointer "
-                  src={`https://metadata.ens.domains/mainnet/avatar/${ensName}`}
+                  src={avatarUrl || ""}
                 />
                 <AvatarFallback></AvatarFallback>
               </Avatar>
@@ -474,145 +486,6 @@ function ContractsTable({ opsData }: { opsData: ContractInfo[] }) {
             ))}
             <TableRow className="text-lg font-bold">
               <TableCell colSpan={2} className="text-right">
-                Total
-              </TableCell>
-              <TableCell className="text-right">
-                ${formatCurrency(totalUsdValue, 18, 1, true)}
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </div>
-    </div>
-  );
-}
-
-function EndowmentTable({ endowmentData }: { endowmentData: TokenDetails[] }) {
-  const filteredData = endowmentData
-    .filter((multisig) => {
-      return !isZero(multisig.balance || 0n, multisig.decimals);
-    })
-    .sort((a, b) => {
-      // Handle cases where label might be undefined or null
-      const labelA = a.usdValue || 0n;
-      const labelB = b.usdValue || 0n;
-
-      if (labelA > labelB) {
-        return -1;
-      }
-      if (labelA < labelB) {
-        return 1;
-      }
-      return 0;
-    });
-
-  const totalUsdValue = endowmentData.reduce((accumulator, token) => {
-    return accumulator + (token.usdValue || 0n);
-  }, 0n);
-
-  return (
-    <div className=" w-full max-w-3xl ">
-      <h2 className=" flex flex-col sm:text-3xl text-2xl mt-10 sm:my-10 font-extrabold text-center">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger> Endowment Balances</TooltipTrigger>
-            <TooltipContent
-              copyText="0x4F2083f5fBede34C2714aFfb3105539775f7FE64"
-              onClick={() =>
-                openEtherScan({
-                  address: "0x4F2083f5fBede34C2714aFfb3105539775f7FE64",
-                })
-              }
-              className=" font-normal"
-            >
-              0x4F2083f5fBede34C2714aFfb3105539775f7FE64
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </h2>
-
-      <div className="overflow-x-auto mx-4 sm:w-full">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="sm:text-lg text-center">Token</TableHead>
-              <TableHead className="text-center sm:text-lg ">
-                Description
-              </TableHead>
-              <TableHead className=" text-right text-lg ">Balance</TableHead>
-              <TableHead className=" text-right text-lg ">USD Value</TableHead>
-            </TableRow>
-          </TableHeader>
-
-          <TableBody>
-            {filteredData.map((contract, index) => (
-              <TableRow key={index}>
-                <TableCell className="font-medium sm:min-w-48">
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger
-                        onClick={() =>
-                          openEtherScan({
-                            address:
-                              contract.address ||
-                              "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF",
-                          })
-                        }
-                        className="flex flex-col gap-1"
-                      >
-                        {" "}
-                        {contract.symbol}
-                      </TooltipTrigger>
-                      <TooltipContent
-                        copyText={contract.address || ""}
-                        onClick={() =>
-                          openEtherScan({
-                            address:
-                              contract.address ||
-                              "0x534631Bcf33BDb069fB20A93d2fdb9e4D4dD42CF",
-                          })
-                        }
-                        // className=""
-                      >
-                        {contract.address}
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </TableCell>
-
-                <TableCell className="sm:min-w-24 max-w-96 flex-wrap">
-                  {contract.name}
-                </TableCell>
-
-                <TableCell className="text-right font-mono ">
-                  <div className="flex flex-col">
-                    <span>
-                      {formatCurrency(
-                        contract.balance || 0n,
-                        contract.decimals,
-                        1,
-                        true
-                      )}
-                    </span>
-                  </div>
-                </TableCell>
-                <TableCell className="text-right font-mono ">
-                  {contract.usdValue
-                    ? formatCurrency(
-                        contract.usdValue,
-                        contract.symbol === "cUSDCv3" ||
-                          contract.symbol === "aEthUSDC"
-                          ? 18
-                          : contract.decimals,
-                        1,
-                        true
-                      )
-                    : "N/A"}
-                </TableCell>
-              </TableRow>
-            ))}
-            <TableRow className="text-lg font-bold">
-              <TableCell colSpan={3} className="text-right">
                 Total
               </TableCell>
               <TableCell className="text-right">
