@@ -14,11 +14,6 @@ import {
   abiBalanceOf,
   abiOwners,
   abiGetThreshold,
-  abiGetName,
-  abiGetSymbol,
-  abiGetDecimals,
-  abiPieOf,
-  abiREthRate,
   abiUsdEthRate,
 } from "./abi/abi";
 
@@ -28,32 +23,8 @@ export const revalidate = 3600;
 const ENS_TOKEN_CONTRACT = "0xC18360217D8F7Ab5e7c516566761Ea12Ce7F9D72";
 
 const USDC_TOKEN_CONTRACT = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
-const rEth = "0xae78736Cd615f374D3085123A210448E74Fc6393"; // RETH
-const usdEth = "0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419";
 
-const tokenContracts = [
-  "0xC18360217D8F7Ab5e7c516566761Ea12Ce7F9D72",
-  "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", // USDC
-  "0x59cD1C87501baa753d0B5B5Ab5D8416A45cD71DB",
-  "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2", // WETH
-  "0xc3d688B66703497DAA19211EEdff47f25384cdc3",
-  "0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84", // STETH
-  "0x4d5F47FA6A74757f35C14fD3a6Ef8E3C9BC514E8",
-  "0x6b175474e89094c44da98b954eedeac495271d0f", // DAI
-  "0xA35b1B31Ce002FBF2058D22F30f95D405200A15b", // ETHx
-  "0xDd1fE5AD401D4777cE89959b7fa587e569Bf125D",
-  "0xA17581A9E3356d9A858b789D68B4d866e593aE94",
-  "0x373238337Bfe1146fb49989fc222523f83081dDb",
-  "0x2a14dB8D09dB0542f6A371c0cB308A768227D67D",
-  "0xc592c33e51A764B94DB0702D8BAf4035eD577aED",
-  "0xf1C9acDc66974dFB6dEcB12aA385b9cD01190E38", // spWETH
-  "0xae78736Cd615f374D3085123A210448E74Fc6393", // RETH
-  "0xba100000625a3754423978a60c9317c58a424e3d", // BAL
-  "0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0", // WSTETH
-  "0xe95a203b1a91a908f9b9ce46459d101078c2c3cb", // ANKRETH
-  "0x1BA8603DA702602A8657980e825A6DAa03Dee93a", // USDCx
-  "0x98C23E9d8f34FEFb1B7BD6a91B7FF122F4e16F5c", // USDC aave
-];
+const usdEth = "0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419";
 
 const publicClient = createPublicClient({
   batch: {
@@ -72,12 +43,6 @@ export default async function Home() {
   }
 
   const parsedEthPrice = BigInt(Math.round(Number(formatUnits(ethPrice, 8))));
-
-  const rEthRate = await getrEthRate();
-  const parsedREthRate = BigInt(
-    Math.round(Number(formatEther(rEthRate)) * 1000)
-  );
-  const rEthPrice = (parsedREthRate * parsedEthPrice) / 1000n;
 
   const multiSigData = await getMultiSigData({ multisigs: multiSigs });
 
@@ -102,44 +67,12 @@ export default async function Home() {
     };
   });
 
-  const endowmentData = await fetchAllTokenDetails(
-    "0x4F2083f5fBede34C2714aFfb3105539775f7FE64"
-  );
-  const ethTokens = [
-    "aEthWETH",
-    "stETH",
-    "WETH",
-    "spWETH",
-    "cWETHv3",
-    "ankrETH",
-    "ETHx",
-    "osETH",
-    "aurawstETH-WETH-BPT-vault",
-    "osETH/wETH-BPT-gauge",
-  ];
-  const rEthTokens = ["rETH", "auraB-rETH-STABLE-vault"];
-
-  endowmentData.map((token) => {
-    if (ethTokens.includes(token.symbol)) {
-      token.usdValue = token.balance * parsedEthPrice;
-    } else if (rEthTokens.includes(token.symbol)) {
-      token.usdValue = token.balance * rEthPrice;
-    } else if (token.symbol === "cUSDCv3" || token.symbol === "aEthUSDC") {
-      token.usdValue = token.balance * BigInt(1e12);
-    } else {
-      token.usdValue = token.balance;
-    }
-
-    return token;
-  });
-
   const blockTimestamp = (await publicClient.getBlock()).timestamp * 1000n;
 
   return (
     <Client
       multiSigData={multiSigData}
       opsData={opsData}
-      endowmentData={endowmentData}
       block={blockTimestamp}
     />
   );
@@ -257,100 +190,6 @@ async function getTokenBalance(
   });
 }
 
-async function getTokenDetails(
-  tokenContractAddress: Address,
-  userAddress: Address
-): Promise<TokenDetails> {
-  // Fetch the token balance
-  if (tokenContractAddress === "0x373238337Bfe1146fb49989fc222523f83081dDb") {
-    const balance = await publicClient.readContract({
-      address: tokenContractAddress,
-      abi: abiPieOf,
-      functionName: "pieOf",
-      args: [userAddress],
-      factory: undefined,
-      factoryData: undefined,
-      stateOverride: undefined,
-    });
-
-    const name = "Maker: DSR Manager";
-    const symbol = "DAI";
-    const decimals = 18;
-    return {
-      balance,
-      name,
-      symbol,
-      decimals,
-      address: tokenContractAddress,
-    };
-  } else {
-    const balance = await publicClient.readContract({
-      address: tokenContractAddress,
-      abi: abiBalanceOf,
-      functionName: "balanceOf",
-      args: [userAddress],
-      factory: undefined,
-      factoryData: undefined,
-      stateOverride: undefined,
-    });
-
-    // Fetch the token name
-    const name = (await publicClient.readContract({
-      address: tokenContractAddress,
-      abi: abiGetName,
-      functionName: "name",
-      args: [],
-      factory: undefined,
-      factoryData: undefined,
-      stateOverride: undefined,
-    })) as string;
-
-    const symbol = (await publicClient.readContract({
-      address: tokenContractAddress,
-      abi: abiGetSymbol,
-      functionName: "symbol",
-      args: [],
-      factory: undefined,
-      factoryData: undefined,
-      stateOverride: undefined,
-    })) as string;
-
-    const decimals = (await publicClient.readContract({
-      address: tokenContractAddress,
-      abi: abiGetDecimals,
-      functionName: "decimals",
-      args: [],
-      factory: undefined,
-      factoryData: undefined,
-      stateOverride: undefined,
-    })) as number;
-
-    return {
-      balance,
-      name,
-      symbol,
-      decimals,
-      address: tokenContractAddress,
-    };
-  }
-}
-
-async function fetchAllTokenDetails(
-  userAddress: Address
-): Promise<TokenDetails[]> {
-  try {
-    const promises = tokenContracts.map((tokenContractAddress) =>
-      getTokenDetails(tokenContractAddress as Address, userAddress)
-    );
-
-    const results = await Promise.all(promises);
-    return results; // Return the array of token details
-  } catch (error) {
-    console.error("Error fetching token details:", error);
-    throw error; // Re-throw the error to handle it in the calling function
-  }
-}
-
 async function getEthPrice(): Promise<bigint | null> {
   try {
     const [, answer] = await publicClient.readContract({
@@ -364,15 +203,4 @@ async function getEthPrice(): Promise<bigint | null> {
     console.error("Error fetching ETH price:", error);
     return null;
   }
-}
-
-async function getrEthRate(): Promise<bigint> {
-  return await publicClient.readContract({
-    address: rEth,
-    abi: abiREthRate,
-    functionName: "getExchangeRate",
-    factory: undefined,
-    factoryData: undefined,
-    stateOverride: undefined,
-  });
 }
