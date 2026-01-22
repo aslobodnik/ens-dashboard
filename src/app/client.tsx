@@ -33,6 +33,7 @@ import { Address, formatUnits } from "viem";
 import { ContractInfo, MultiSig, TokenDetails } from "./types/types";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export function Client({
   multiSigData,
@@ -94,6 +95,11 @@ export function Client({
 
   return (
     <main className="flex min-h-screen flex-col items-center px-4 py-8 sm:px-8 sm:py-12 mx-auto max-w-6xl animate-fade-in">
+      {/* Theme Toggle - Top Right */}
+      <div className="fixed top-4 right-4 z-50">
+        <ThemeToggle />
+      </div>
+
       {/* Page Header */}
       <header className="w-full text-center mb-10">
         <h1 className="font-serif text-3xl sm:text-4xl font-bold text-primary mb-2">

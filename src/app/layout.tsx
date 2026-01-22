@@ -1,11 +1,8 @@
-"use client";
 import type { Metadata } from "next";
 import { Libre_Baskerville, Source_Sans_3, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { WagmiProvider } from "wagmi";
-import { config } from "../../wagmi.config";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Script from "next/script";
+import { Providers } from "@/components/providers";
 
 const libreBaskerville = Libre_Baskerville({
   subsets: ["latin"],
@@ -23,7 +20,24 @@ const jetbrainsMono = JetBrains_Mono({
   variable: "--font-jetbrains-mono",
 });
 
-const queryClient = new QueryClient();
+export const metadata: Metadata = {
+  metadataBase: new URL("https://wallets.ens.domains"),
+  title: "ENS Wallets",
+  description: "ENS DAO Treasury Dashboard - View wallet balances and multisig configurations",
+  icons: {
+    icon: "/favicon.svg",
+  },
+  openGraph: {
+    title: "ENS Wallets",
+    description: "ENS DAO Treasury Dashboard - View wallet balances and multisig configurations",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ENS Wallets",
+    description: "ENS DAO Treasury Dashboard",
+  },
+};
 
 export default function RootLayout({
   children,
@@ -31,7 +45,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         {/* Google Analytics */}
         <Script
@@ -47,13 +61,9 @@ export default function RootLayout({
           `}
         </Script>
       </head>
-      <WagmiProvider config={config}>
-        <QueryClientProvider client={queryClient}>
-          <body className={`${libreBaskerville.variable} ${sourceSans.variable} ${jetbrainsMono.variable} font-sans antialiased`}>
-            {children}
-          </body>
-        </QueryClientProvider>
-      </WagmiProvider>
+      <body className={`${libreBaskerville.variable} ${sourceSans.variable} ${jetbrainsMono.variable} font-sans antialiased`}>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

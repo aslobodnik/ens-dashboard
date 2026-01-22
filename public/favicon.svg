@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e3a5f"/>
+      <stop offset="100%" stop-color="#4a90d9"/>
+    </linearGradient>
+  </defs>
+  <!-- Stylized vault/treasury symbol - interlocking geometric pattern -->
+  <circle cx="16" cy="16" r="14" fill="none" stroke="url(#g)" stroke-width="2"/>
+  <path d="M16 4 L16 28 M4 16 L28 16" stroke="url(#g)" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="16" cy="16" r="6" fill="url(#g)"/>
+  <circle cx="16" cy="16" r="3" fill="#faf9f7"/>
+</svg>

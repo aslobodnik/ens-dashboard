@@ -34,6 +34,37 @@
 
     --radius: 0.375rem;
   }
+
+  .dark {
+    /* Dark Constitutional Theme - Dignified dark mode */
+    --background: 222 30% 10%; /* Deep navy-slate #131a24 */
+    --foreground: 40 20% 92%; /* Warm off-white #eceae6 */
+
+    --card: 222 25% 14%; /* Slightly lighter slate #1c2533 */
+    --card-foreground: 40 20% 92%;
+
+    --popover: 222 25% 12%;
+    --popover-foreground: 40 20% 92%;
+
+    --primary: 210 60% 55%; /* Lighter blue for dark mode #4a90d9 */
+    --primary-foreground: 222 30% 10%;
+
+    --secondary: 222 20% 18%;
+    --secondary-foreground: 40 20% 92%;
+
+    --muted: 222 20% 18%;
+    --muted-foreground: 220 15% 60%;
+
+    --accent: 210 60% 55%;
+    --accent-foreground: 222 30% 10%;
+
+    --destructive: 0 60% 55%;
+    --destructive-foreground: 40 20% 92%;
+
+    --border: 222 20% 22%;
+    --input: 222 20% 22%;
+    --ring: 210 60% 55%;
+  }
 }
 
 @layer base {
