@@ -1,18 +1,27 @@
 "use client";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Libre_Baskerville, Source_Sans_3, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { WagmiProvider } from "wagmi";
 import { config } from "../../wagmi.config";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Script from "next/script";
 
-const inter = Inter({ subsets: ["latin"] });
+const libreBaskerville = Libre_Baskerville({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-libre-baskerville",
+});
 
-// export const metadata: Metadata = {
-//   title: "ENS DAO Dashboard",
-//   description: "MVP",
-// };
+const sourceSans = Source_Sans_3({
+  subsets: ["latin"],
+  variable: "--font-source-sans",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains-mono",
+});
 
 const queryClient = new QueryClient();
 
@@ -40,7 +49,9 @@ export default function RootLayout({
       </head>
       <WagmiProvider config={config}>
         <QueryClientProvider client={queryClient}>
-          <body className={inter.className}>{children}</body>
+          <body className={`${libreBaskerville.variable} ${sourceSans.variable} ${jetbrainsMono.variable} font-sans antialiased`}>
+            {children}
+          </body>
         </QueryClientProvider>
       </WagmiProvider>
     </html>

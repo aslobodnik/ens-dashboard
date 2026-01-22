@@ -162,7 +162,7 @@ async function getMultiSigInfo({
     return {
       address: address,
       signers: [...signers],
-      threshold: threshold as number,
+      threshold: Number(threshold),
       multisig: true,
     };
   });
