@@ -470,34 +470,47 @@ function ContractsTable({ opsData }: { opsData: ContractInfo[] }) {
             </TableHeader>
 
             <TableBody>
-              {opsData.map((contract, index) => (
-                <TableRow key={index}>
-                  <TableCell className="font-medium sm:min-w-52">
-                    <div className="text-foreground font-semibold">
-                      {contract.label || "N/A"}
-                    </div>
-                    <WalletAddress address={contract.address} />
-                  </TableCell>
+              {opsData.map((contract, index) => {
+                const alertLevel = getUsdcAlertLevel(contract);
+                return (
+                  <TableRow
+                    key={index}
+                    className={
+                      alertLevel === "danger"
+                        ? "bg-[hsl(var(--row-danger))]"
+                        : alertLevel === "warning"
+                          ? "bg-[hsl(var(--row-warning))]"
+                          : ""
+                    }
+                  >
+                    <TableCell className="font-medium sm:min-w-52">
+                      <div className={`font-semibold ${alertLevel === "danger" ? "text-[hsl(var(--row-danger-foreground))]" : alertLevel === "warning" ? "text-[hsl(var(--row-warning-foreground))]" : "text-foreground"}`}>
+                        {contract.label || "N/A"}
+                      </div>
+                      <WalletAddress address={contract.address} />
+                    </TableCell>
 
-                  <TableCell className="sm:min-w-56 max-w-96 text-muted-foreground">
-                    {contract.description}
-                  </TableCell>
+                    <TableCell className={`sm:min-w-56 max-w-96 ${alertLevel ? "text-[hsl(var(--row-" + alertLevel + "-foreground))]" : "text-muted-foreground"}`}>
+                      {contract.description}
+                    </TableCell>
 
-                  <TableCell className="text-right font-mono text-foreground">
-                    <div className="flex flex-col">
-                      <span>
-                        {formatCurrency(contract.ethBalance || 0n, 18, 1)} ETH
-                      </span>
-                      <span>
-                        {formatCurrency(contract.ensBalance || 0n, 18, 1, true)} ENS
-                      </span>
-                      <span>
-                        {formatCurrency(contract.usdcBalance || 0n, 6, 0, true)} USDC
-                      </span>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
+                    <TableCell className="text-right font-mono text-foreground">
+                      <div className="flex flex-col">
+                        <span>
+                          {formatCurrency(contract.ethBalance || 0n, 18, 1)} ETH
+                        </span>
+                        <span>
+                          {formatCurrency(contract.ensBalance || 0n, 18, 1, true)} ENS
+                        </span>
+                        <span className={`inline-flex items-center justify-end gap-1.5 ${alertLevel ? "font-bold text-[hsl(var(--row-" + alertLevel + "-foreground))]" : ""}`}>
+                          {formatCurrency(contract.usdcBalance || 0n, 6, 0, true)} USDC
+                          {alertLevel && <UsdcAlertIndicator level={alertLevel} />}
+                        </span>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
               <TableRow className="font-bold bg-muted/30">
                 <TableCell colSpan={2} className="text-right text-foreground">
                   Total USD Value
@@ -512,6 +525,44 @@ function ContractsTable({ opsData }: { opsData: ContractInfo[] }) {
       </div>
     </section>
   );
+}
+
+function UsdcAlertIndicator({ level }: { level: "warning" | "danger" }) {
+  const message =
+    level === "danger"
+      ? "DAO operational funds critically low — less than 30 days of runway at current spend"
+      : "DAO operational funds declining — runway may be limited if not replenished";
+
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span
+            className={`inline-flex items-center justify-center w-4 h-4 rounded-full text-[10px] font-bold leading-none cursor-default ${
+              level === "danger"
+                ? "bg-[hsl(var(--row-danger-foreground))] text-[hsl(var(--row-danger))]"
+                : "bg-[hsl(var(--row-warning-foreground))] text-[hsl(var(--row-warning))]"
+            }`}
+          >
+            !
+          </span>
+        </TooltipTrigger>
+        <TooltipContent>{message}</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
+
+const ENS_WALLET_ADDRESS = "0xFe89cc7aBB2C4183683ab71653C4cdc9B02D44b7";
+const USDC_1M = 1_000_000_000_000n; // 1M USDC (6 decimals)
+const USDC_500K = 500_000_000_000n; // 500K USDC (6 decimals)
+
+function getUsdcAlertLevel(contract: ContractInfo): "warning" | "danger" | null {
+  if (contract.address.toLowerCase() !== ENS_WALLET_ADDRESS.toLowerCase()) return null;
+  const usdc = contract.usdcBalance || 0n;
+  if (usdc < USDC_500K) return "danger";
+  if (usdc < USDC_1M) return "warning";
+  return null;
 }
 
 const isZero = (amount: bigint, tokenDecimals: number): boolean => {
